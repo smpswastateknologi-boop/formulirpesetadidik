@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulir Siswa SMP Swasta Teknologi</title>
+    <title>Formulir Peserta Didik</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -63,17 +63,42 @@
                     </div>
                 </div>
             </div>
-            <div class="flex items-center space-x-2">
-                <button type="button" onclick="openDbSettingsModal()" class="p-2 bg-blue-900/50 hover:bg-blue-900 text-blue-200 rounded-lg border border-blue-700/50 transition-colors flex items-center gap-1 text-xs" title="Pengaturan Database">
-                    <i data-lucide="settings" class="w-4 h-4"></i> Pengaturan DB
+            
+            <!-- Menu Navigasi Utama -->
+            <div class="flex items-center space-x-3">
+                <nav class="flex bg-blue-950/60 p-1 rounded-lg border border-blue-700/30">
+                    <button type="button" onclick="navigateToPage('form')" id="nav-form" class="nav-link-btn active px-4 py-2 rounded-md text-xs font-bold transition-all flex items-center gap-1.5">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Formulir Siswa
+                    </button>
+                    <button type="button" onclick="navigateToPage('admin')" id="nav-admin" class="nav-link-btn px-4 py-2 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 relative">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i> Portal Admin
+                        <span id="navBadgeCount" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold animate-bounce">0</span>
+                    </button>
+                </nav>
+                
+                <button type="button" onclick="openDbSettingsModal()" class="p-2.5 bg-blue-900/50 hover:bg-blue-900 text-blue-200 rounded-lg border border-blue-700/50 transition-colors flex items-center justify-center" title="Pengaturan Database">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
                 </button>
-                <div class="flex items-center space-x-2 bg-blue-900/50 px-3 py-2 rounded-lg border border-blue-700/50">
+                
+                <div class="hidden lg:flex items-center space-x-2 bg-blue-900/50 px-3 py-2 rounded-lg border border-blue-700/50">
                     <div id="dbIndicator" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></div>
                     <span id="dbBadgeText" class="text-xs font-semibold tracking-wider text-amber-300">MENGHUBUNGKAN...</span>
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- Custom Styling untuk Menu Navigasi Aktif -->
+    <style>
+        .nav-link-btn {
+            color: #93c5fd;
+        }
+        .nav-link-btn.active {
+            background-color: #1e40af;
+            color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+    </style>
 
     <!-- Sub-Header Keterangan Form -->
     <div class="bg-blue-50 border-b border-blue-200 py-3 no-print">
@@ -82,30 +107,18 @@
                 <i data-lucide="database" class="w-4 h-4 text-blue-600"></i>
                 <span id="dbStatus">Menginisialisasi sistem basis data...</span>
             </div>
-            <span class="text-xs text-slate-500">Formulir Peserta Didik SMP Swasta Teknologi.</span>
+            <span class="text-xs text-slate-500">Aplikasi Data Siswa SMP Swasta Teknologi.</span>
         </div>
     </div>
 
     <!-- Konten Utama -->
     <main class="flex-grow container mx-auto px-4 py-6 max-w-6xl space-y-6">
-        <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden print-area">
-            
-            <!-- Header Cetak -->
-            <div class="hidden print-header items-center space-x-6">
-                <div class="bg-white p-1 rounded-full w-12 h-12 flex items-center justify-center shadow-inner overflow-hidden border border-slate-300">
-                    <img src="https://iili.io/BprJ3qx.png" alt="Logo SMP Swasta Teknologi" class="w-10 h-10 object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=100';">
-                </div>
-                <div class="flex-grow text-center">
-                    <h2 class="text-xl font-bold uppercase tracking-wider">FORMULIR PESERTA DIDIK</h2>
-                    <h3 class="text-lg font-bold text-indigo-900">SMP SWASTA TEKNOLOGI</h3>
-                    <p class="text-xs text-slate-600">NPSN: 69952421 | Jl. Poros Wisata Meleura, Desa Lakarinta</p>
-                </div>
-                <div class="text-right text-xs">
-                    <p class="font-bold">DAPODIK SISWA</p>
-                    <p>Tahun Ajaran: 2026/2027</p>
-                </div>
-            </div>
 
+        <!-- ======================================================== -->
+        <!-- HALAMAN 1: FORMULIR INPUT SISWA                          -->
+        <!-- ======================================================== -->
+        <div id="page-form" class="view-page bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden print-area">
+            
             <!-- Panel Notifikasi Custom -->
             <div id="alertBox" class="hidden mx-6 mt-6 p-4 rounded-lg flex items-start space-x-3 transition-all duration-300">
                 <div id="alertIcon"></div>
@@ -120,7 +133,7 @@
 
             <form id="dapodikForm" onsubmit="handleSubmit(event)" class="p-6 space-y-6">
                 
-                <!-- Navigasi Tab -->
+                <!-- Navigasi Tab Isian Form -->
                 <div class="flex overflow-x-auto border-b border-slate-200 no-print pb-px gap-1 md:gap-2 -mx-6 px-6">
                     <button type="button" onclick="switchTab('pribadi')" id="tab-pribadi" class="tab-btn active px-4 py-2.5 font-semibold text-sm rounded-t-lg border-t border-x border-transparent text-slate-600 hover:text-indigo-600 whitespace-nowrap flex items-center gap-2">
                         <i data-lucide="user" class="w-4 h-4"></i> Data Pribadi
@@ -139,7 +152,6 @@
                     </button>
                 </div>
 
-                <!-- Custom Styling for Active Tab -->
                 <style>
                     .tab-btn.active {
                         background-color: #f8fafc;
@@ -469,7 +481,7 @@
                         <!-- Penghasilan Wali -->
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Penghasilan Wali</label>
-                            <select name="penghasilan_wali" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
+                            <select name="pendidikan_wali" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
                                 <option value="">-- Pilih Rentang Pendapatan --</option>
                                 <option value="Kurang dari Rp 1.000.000">Kurang dari Rp 1.000.000</option>
                                 <option value="Rp 1.000.000 - Rp 2.999.999">Rp 1.000.000 - Rp 2.999.999</option>
@@ -679,11 +691,8 @@
                         <button type="button" onclick="printForm()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-medium text-sm rounded-lg flex items-center gap-1.5 transition-colors">
                             <i data-lucide="printer" class="w-4 h-4"></i> Cetak Formulir
                         </button>
-                        <button type="button" onclick="exportToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg flex items-center gap-1.5 transition-colors">
-                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Unduh Excel
-                        </button>
                         <button type="submit" class="px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold text-sm rounded-lg shadow flex items-center gap-1.5 transition-colors">
-                            <i data-lucide="save" class="w-4 h-4"></i> Simpan ke Database
+                            <i data-lucide="save" class="w-4 h-4"></i> Simpan
                         </button>
                     </div>
                 </div>
@@ -691,18 +700,23 @@
             </form>
         </div>
 
-        <!-- PANEL KONTROL ADMIN (REAL-TIME CRUD & SINKRONISASI) -->
-        <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden no-print">
+        <!-- ======================================================== -->
+        <!-- HALAMAN 2: PORTAL ADMIN (SINKRONISASI & CRUD REAL-TIME)  -->
+        <!-- ======================================================== -->
+        <div id="page-admin" class="view-page bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden no-print hidden">
             
             <!-- Header Panel Admin -->
             <div class="bg-slate-800 text-white px-6 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-700">
                 <div>
                     <h3 class="font-bold text-lg flex items-center gap-2 text-emerald-400">
-                        <i data-lucide="shield-check" class="w-6 h-6"></i> Panel Kontrol Admin
+                        <i data-lucide="shield-check" class="w-6 h-6"></i> Panel Kontrol Admin Dapodik
                     </h3>
                     <p class="text-xs text-slate-400 mt-1">Sistem manajemen basis data induk kependidikan SMP Swasta Teknologi</p>
                 </div>
-                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                <div class="flex flex-wrap gap-2 w-full md:w-auto items-center">
+                    <button type="button" onclick="logoutAdmin()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Sesi Admin
+                    </button>
                     <button type="button" onclick="exportAllStudentsToExcel()" class="w-full md:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-colors shadow">
                         <i data-lucide="download" class="w-4 h-4"></i> Ekspor Semua ke Excel
                     </button>
@@ -817,6 +831,47 @@
         </div>
     </main>
 
+    <!-- MODAL POP-UP: LOGIN PROTEKSI PORTAL ADMIN -->
+    <div id="adminAuthModal" class="fixed inset-0 bg-slate-950/70 z-50 flex items-center justify-center p-4 hidden no-print">
+        <div class="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-sm overflow-hidden flex flex-col">
+            <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
+                <h4 class="font-bold text-sm flex items-center gap-2 text-indigo-400"><i data-lucide="lock" class="w-4 h-4"></i> Autentikasi Pengurus</h4>
+                <button onclick="cancelAdminAuth()" class="text-slate-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="text-center">
+                    <div class="mx-auto w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-2">
+                        <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                    </div>
+                    <h5 class="font-bold text-slate-800 text-sm">Akses Khusus Administrator</h5>
+                    <p class="text-slate-500 text-xxs mt-1">Harap masukkan kata sandi Anda untuk melihat panel sinkronisasi data.</p>
+                </div>
+                <div>
+                    <label class="block text-xxs font-bold text-slate-500 uppercase tracking-wider mb-1">Kata Sandi Pengawas</label>
+                    <div class="relative">
+                        <input type="password" id="adminPasswordInput" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Masukkan sandi administrator..." onkeydown="handleAuthKeyDown(event)">
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <i data-lucide="key" class="w-4 h-4 text-slate-400"></i>
+                        </span>
+                    </div>
+                    <p id="authErrorMessage" class="hidden text-rose-500 text-[10px] font-semibold mt-1 flex items-center gap-1">
+                        <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Kata sandi salah. Silakan coba kembali.
+                    </p>
+                </div>
+                <div class="flex gap-2 justify-end pt-2 border-t">
+                    <button type="button" onclick="cancelAdminAuth()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors">
+                        Batal
+                    </button>
+                    <button type="button" onclick="submitAdminAuth()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors shadow">
+                        Buka Portal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL POP-UP: DETAIL LENGKAP BIODATA SISWA -->
     <div id="detailSiswaModal" class="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 hidden no-print">
         <div class="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-3xl max-h-[90vh] overflow-y-auto flex flex-col">
@@ -833,6 +888,9 @@
             </div>
             <!-- Modal Footer -->
             <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end gap-2">
+                <button type="button" id="modalExcelBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Unduh Excel
+                </button>
                 <button type="button" id="modalPrintBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5">
                     <i data-lucide="printer" class="w-4 h-4"></i> Cetak Dokumen Ini
                 </button>
@@ -874,7 +932,7 @@
 
     <!-- Footer Web -->
     <footer class="bg-slate-800 text-slate-400 py-6 text-center text-xs border-t border-slate-700 no-print">
-        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir F-PD (Dapodik).</p>
+        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir Peserta Didik</p>
         <p class="mt-1 text-slate-500">Dikembangkan by Tim Teknis SMP Swasta Teknologi.</p>
     </footer>
 
@@ -967,6 +1025,13 @@
                         // Simpan salinan ke offline cache sebagai perlindungan
                         localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(currentSiswaList));
 
+                        // Perbarui badge counter navigasi admin
+                        const badgeCount = document.getElementById('navBadgeCount');
+                        if (badgeCount) {
+                            badgeCount.textContent = currentSiswaList.length;
+                            badgeCount.classList.toggle('hidden', currentSiswaList.length === 0);
+                        }
+
                         applyFilters();
                     }, (error) => {
                         console.error("Firestore listening error: ", error);
@@ -993,6 +1058,12 @@
                 };
 
                 window.deleteSiswaFromCloud = async (nisn, nama) => {
+                    // Proteksi ganda untuk proses penghapusan data
+                    if (!window.checkAdminAuthSession()) {
+                        showAlert('error', 'Akses Ditolak', 'Sesi admin Anda tidak valid atau telah berakhir. Harap login ulang.');
+                        return;
+                    }
+
                     showAlert('success', 'Konfirmasi Penghapusan', `Apakah Anda yakin ingin menghapus data siswa "${nama}"? Klik tindakan di bawah untuk menghapus.`);
                     
                     const alertMessageEl = document.getElementById('alertMessage');
@@ -1001,7 +1072,6 @@
                     confirmBtn.textContent = "Ya, Hapus Permanen";
                     confirmBtn.onclick = async () => {
                         try {
-                            // Sesuai Perbaikan BUG: mengikat target 'nisn' dengan benar
                             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'siswa', nisn);
                             await deleteDoc(docRef);
                             showAlert('success', 'Data Dihapus', `Biodata "${nama}" telah berhasil dihapus secara permanen.`);
@@ -1019,7 +1089,6 @@
                 fallbackToOffline();
             }
         } else {
-            // fallback total jika config tidak terdeteksi sama sekali
             fallbackToOffline();
         }
 
@@ -1046,18 +1115,33 @@
             }
 
             window.currentSiswaList = () => offlineData;
+
+            // Perbarui badge counter navigasi admin
+            const badgeCount = document.getElementById('navBadgeCount');
+            if (badgeCount) {
+                badgeCount.textContent = offlineData.length;
+                badgeCount.classList.toggle('hidden', offlineData.length === 0);
+            }
+
             applyFilters();
 
             // Override fungsi simpan ke LocalStorage saja
             window.saveSiswaToCloud = async (payload) => {
                 const index = offlineData.findIndex(s => s.nisn === payload.nisn);
                 if (index !== -1) {
-                    offlineData[index] = payload; // Update data
+                    offlineData[index] = payload; 
                 } else {
-                    offlineData.push(payload); // Tambah data baru
+                    offlineData.push(payload); 
                 }
                 localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(offlineData));
                 showAlert('success', 'Tersimpan Secara Lokal!', `Biodata siswa "${payload.nama}" berhasil disimpan di memori lokal browser ini.`);
+                
+                // Perbarui badge counter
+                if (badgeCount) {
+                    badgeCount.textContent = offlineData.length;
+                    badgeCount.classList.toggle('hidden', offlineData.length === 0);
+                }
+
                 applyFilters();
 
                 document.getElementById('jsonViewer').textContent = JSON.stringify(payload, null, 4);
@@ -1067,6 +1151,11 @@
 
             // Override fungsi hapus lokal
             window.deleteSiswaFromCloud = async (nisn, nama) => {
+                if (!window.checkAdminAuthSession()) {
+                    showAlert('error', 'Akses Ditolak', 'Sesi admin Anda tidak valid atau telah berakhir. Harap login ulang.');
+                    return;
+                }
+
                 showAlert('success', 'Konfirmasi Penghapusan', `Apakah Anda yakin ingin menghapus data siswa "${nama}" secara lokal?`);
                 const alertMessageEl = document.getElementById('alertMessage');
                 const confirmBtn = document.createElement('button');
@@ -1076,6 +1165,13 @@
                     offlineData = offlineData.filter(s => s.nisn !== nisn);
                     localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(offlineData));
                     showAlert('success', 'Data Dihapus', `Data "${nama}" telah berhasil dihapus dari browser ini.`);
+                    
+                    // Perbarui badge counter
+                    if (badgeCount) {
+                        badgeCount.textContent = offlineData.length;
+                        badgeCount.classList.toggle('hidden', offlineData.length === 0);
+                    }
+
                     applyFilters();
                 };
                 alertMessageEl.appendChild(confirmBtn);
@@ -1086,6 +1182,86 @@
     <!-- UI Logic Controllers, Filters, and Administration Tools -->
     <script>
         let currentTab = 'pribadi';
+        let currentPage = 'form';
+        let isAdminAuthenticated = false; // Status otentikasi admin sesi ini
+
+        // KUNCI SANDI PORTAL ADMIN (Dapat disesuaikan)
+        const ADMIN_DEFAULT_PASSWORD = "admin123";
+
+        // Fungsi Perpindahan Halaman Utama (Multi-Page Switcher)
+        function navigateToPage(pageId) {
+            if (pageId === 'admin') {
+                // Periksa apakah admin sudah login di sesi ini
+                if (!isAdminAuthenticated) {
+                    openAdminAuthModal();
+                    return;
+                }
+            }
+
+            // Sembunyikan semua halaman utama
+            document.querySelectorAll('.view-page').forEach(page => page.classList.add('hidden'));
+            
+            // Tampilkan halaman yang dituju
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            
+            // Set menu navigasi aktif
+            document.querySelectorAll('.nav-link-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`nav-${pageId}`).classList.add('active');
+            
+            currentPage = pageId;
+            closeAlert();
+        }
+
+        // ==========================================
+        // PROSES OTENTIKASI KEAMANAN ADMIN
+        // ==========================================
+        function openAdminAuthModal() {
+            document.getElementById('adminPasswordInput').value = "";
+            document.getElementById('authErrorMessage').classList.add('hidden');
+            document.getElementById('adminAuthModal').classList.remove('hidden');
+            document.getElementById('adminPasswordInput').focus();
+        }
+
+        function cancelAdminAuth() {
+            document.getElementById('adminAuthModal').classList.add('hidden');
+            // Kembalikan tombol aktif ke form
+            navigateToPage('form');
+        }
+
+        function handleAuthKeyDown(event) {
+            if (event.key === "Enter") {
+                submitAdminAuth();
+            }
+        }
+
+        function submitAdminAuth() {
+            const passwordInput = document.getElementById('adminPasswordInput').value;
+            const errorMsg = document.getElementById('authErrorMessage');
+
+            if (passwordInput === ADMIN_DEFAULT_PASSWORD) {
+                isAdminAuthenticated = true;
+                document.getElementById('adminAuthModal').classList.add('hidden');
+                
+                // Berhasil masuk, buka halaman portal admin
+                navigateToPage('admin');
+                showAlert('success', 'Sesi Admin Aktif', 'Selamat datang administrator. Seluruh hak akses pengelolaan data siswa telah dibuka.');
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('adminPasswordInput').select();
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminAuthenticated = false;
+            showAlert('success', 'Keluar Sesi', 'Sesi pengurus admin telah ditutup dengan aman.');
+            navigateToPage('form');
+        }
+
+        // Memeriksa status sesi otentikasi admin dari skrip Firebase (modul)
+        function checkAdminAuthSession() {
+            return isAdminAuthenticated;
+        }
+        window.checkAdminAuthSession = checkAdminAuthSession;
 
         // Berpindah Tab Form
         function switchTab(tabId) {
@@ -1200,15 +1376,15 @@
             window.saveSiswaToCloud(payload);
         }
 
-        // Ekspor Hasil Isian Form Aktif ke Excel (.xlsx) menggunakan SheetJS
-        function exportToExcel() {
-            const form = document.getElementById('dapodikForm');
-            if (!form.checkValidity()) {
-                showAlert('error', 'Ekspor Excel Gagal', 'Harap lengkapi semua isian wajib (*) sebelum mengunduh laporan Excel.');
+        // Ekspor Hasil Isian Data Siswa ke Excel (.xlsx) berdasarkan NISN
+        function exportSingleStudentToExcel(nisn) {
+            const list = window.currentSiswaList ? window.currentSiswaList() : [];
+            const data = list.find(s => s.nisn === nisn);
+            if (!data) {
+                showAlert('error', 'Ekspor Excel Gagal', 'Data siswa tidak ditemukan di database.');
                 return;
             }
 
-            const data = getFormData();
             const timestampStr = new Date().toLocaleDateString('id-ID', {
                 year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
             });
@@ -1388,13 +1564,16 @@
                         <div class="text-xxs text-slate-400 mt-0.5">${data.tempat_tinggal}</div>
                     </td>
                     <td class="py-3 px-6 text-right whitespace-nowrap space-x-1.5">
-                        <button type="button" onclick="openDetailModal('${data.nisn}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
+                        <button type="button" onclick="openDetailModal('${data.nisn}')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
                             <i data-lucide="eye" class="w-3.5 h-3.5"></i> Detail
                         </button>
-                        <button type="button" onclick="loadSiswaIntoForm('${data.nisn}')" class="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
+                        <button type="button" onclick="exportSingleStudentToExcel('${data.nisn}')" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1" title="Unduh Excel Siswa Ini">
+                            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Excel
+                        </button>
+                        <button type="button" onclick="loadSiswaIntoFormAndEdit('${data.nisn}')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
                             <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
                         </button>
-                        <button type="button" onclick="deleteSiswaFromCloud('${data.nisn}', '${data.nama}')" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
+                        <button type="button" onclick="deleteSiswaFromCloud('${data.nisn}', '${data.nama}')" class="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
                         </button>
                     </td>
@@ -1405,8 +1584,23 @@
             lucide.createIcons();
         }
 
+        // Pembantu memuat data dan mengalihkan view ke formulir
+        function loadSiswaIntoFormAndEdit(nisn) {
+            if (!isAdminAuthenticated) {
+                showAlert('error', 'Akses Ditolak', 'Harap login terlebih dahulu untuk mengedit data.');
+                return;
+            }
+            loadSiswaIntoForm(nisn);
+            navigateToPage('form');
+        }
+
         // Ekspor MASSAL Seluruh Dokumen Siswa di Database ke Excel
         function exportAllStudentsToExcel() {
+            if (!isAdminAuthenticated) {
+                showAlert('error', 'Akses Ditolak', 'Harap login terlebih dahulu untuk melakukan ekspor massal.');
+                return;
+            }
+
             const list = window.currentSiswaList ? window.currentSiswaList() : [];
             if (list.length === 0) {
                 showAlert('error', 'Gagal Ekspor', 'Tidak ada data siswa terdaftar di database untuk diekspor.');
@@ -1494,7 +1688,7 @@
             showAlert('success', 'Ekspor Berhasil!', `Sebanyak ${list.length} data siswa terdaftar berhasil diekspor ke file Excel: ${filename}`);
         }
 
-        // Membuka Jendela Modal Detail Lengkap Dokumen Siswa
+        // Membuka Jendela Modal Detail Lengkap Biodata Siswa
         function openDetailModal(nisn) {
             const list = window.currentSiswaList ? window.currentSiswaList() : [];
             const siswa = list.find(s => s.nisn === textToId(nisn)); 
@@ -1504,6 +1698,7 @@
             const modal = document.getElementById('detailSiswaModal');
             const content = document.getElementById('modalDetailContent');
             const printBtn = document.getElementById('modalPrintBtn');
+            const excelBtn = document.getElementById('modalExcelBtn');
 
             content.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1572,12 +1767,18 @@
                 </div>
             `;
 
+            // Setup cetak draf khusus siswa ini
             printBtn.onclick = () => {
                 loadSiswaIntoForm(nisn);
                 closeDetailModal();
                 setTimeout(() => {
                     printForm();
                 }, 300);
+            };
+
+            // Setup download excel khusus siswa ini
+            excelBtn.onclick = () => {
+                exportSingleStudentToExcel(nisn);
             };
 
             modal.classList.remove('hidden');
@@ -1590,9 +1791,8 @@
 
         // Logika Pengaturan Modul Cloud Database Admin
         function openDatabaseSettings() {
-            // Memasukkan konfigurasi payload db jika ingin diganti secara mandiri oleh admin sekolah
-            const currentSaved = localStorage.getItem('custom_firebase_config') || "";
-            document.getElementById('dbConfigTextarea').value = currentSaved;
+            const currentSaved = localStorage.getItem('custom_firebase_config');
+            document.getElementById('dbConfigTextarea').value = currentSaved || "";
             document.getElementById('dbSettingsModal').classList.remove('hidden');
         }
 
@@ -1607,7 +1807,7 @@
                 return;
             }
             try {
-                JSON.parse(val); // Tes validasi format JSON
+                JSON.parse(val); 
                 localStorage.setItem('custom_firebase_config', val);
                 closeDbSettingsModal();
                 showAlert('success', 'Konfigurasi Database Disimpan', 'Konfigurasi database kustom disimpan. Aplikasi akan memuat ulang halaman...');
@@ -1615,7 +1815,7 @@
                     window.location.reload();
                 }, 2000);
             } catch(err) {
-                showAlert('error', 'Format JSON Tidak Valid', 'Kode yang Anda masukkan tidak sesuai standar JSON Object. Pastikan tanda petik ganda lengkap.');
+                showAlert('error', 'Format JSON Tidak Valid', 'Kode yang Anda masukkan tidak sesuai standar JSON Object.');
             }
         }
 
@@ -1706,7 +1906,7 @@
         window.showAlert = showAlert;
         window.closeAlert = closeAlert;
         window.handleSubmit = handleSubmit;
-        window.exportToExcel = exportToExcel;
+        window.exportSingleStudentToExcel = exportSingleStudentToExcel;
         window.printForm = printForm;
         window.copyJsonToClipboard = copyJsonToClipboard;
         window.applyFilters = applyFilters;
@@ -1714,10 +1914,16 @@
         window.openDetailModal = openDetailModal;
         window.closeDetailModal = closeDetailModal;
         window.loadSiswaIntoForm = loadSiswaIntoForm;
+        window.loadSiswaIntoFormAndEdit = loadSiswaIntoFormAndEdit;
         window.openDbSettingsModal = openDatabaseSettings;
         window.closeDbSettingsModal = closeDbSettingsModal;
         window.saveCustomDbConfig = saveCustomDbConfig;
         window.clearCustomDbConfig = clearCustomDbConfig;
+        window.navigateToPage = navigateToPage;
+        window.submitAdminAuth = submitAdminAuth;
+        window.cancelAdminAuth = cancelAdminAuth;
+        window.handleAuthKeyDown = handleAuthKeyDown;
+        window.logoutAdmin = logoutAdmin;
     </script>
 </body>
 </html>
