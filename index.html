@@ -107,7 +107,7 @@
                 <i data-lucide="database" class="w-4 h-4 text-blue-600"></i>
                 <span id="dbStatus">Menginisialisasi sistem basis data...</span>
             </div>
-            <span class="text-xs text-slate-500">Aplikasi Data Siswa SMP Swasta Teknologi.</span>
+            <span class="text-xs text-slate-500">Aplikasi Data Peserta Didik SMP Swasta Teknologi.</span>
         </div>
     </div>
 
@@ -622,16 +622,16 @@
                         <!-- Sekolah Asal (SD / Sederajat) -->
                         <div id="asal_sekolah_box">
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Sekolah Asal (SD/MI/Sederajat) <span class="text-rose-500">*</span></label>
-                            <input type="text" id="sekolah_asal" name="sekolah_asal" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Contoh: SD Negeri 01 Kota IT">
+                            <input type="text" id="sekolah_asal" name="sekolah_asal" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Contoh: SD Negeri 8 Loghia">
                         </div>
 
-                        <!-- Nomor Ijazah SD -->
+                        <!-- Nomor Ijazah -->
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nomor Ijazah</label>
                             <input type="text" name="no_ijazah" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Masukkan Nomor Ijazah SD">
                         </div>
 
-                        <!-- Nomor Peserta Ujian SD -->
+                        <!-- NPSN Sekolah Asal -->
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">NPSN Sekolah Asal</label>
                             <input type="text" name="no_peserta_ujian" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Masukkan NPSN Sekolah SD">
@@ -690,6 +690,9 @@
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
                         <button type="button" onclick="printForm()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-medium text-sm rounded-lg flex items-center gap-1.5 transition-colors">
                             <i data-lucide="printer" class="w-4 h-4"></i> Cetak Formulir
+                        </button>
+                        <button type="button" onclick="exportToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Unduh Excel
                         </button>
                         <button type="submit" class="px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold text-sm rounded-lg shadow flex items-center gap-1.5 transition-colors">
                             <i data-lucide="save" class="w-4 h-4"></i> Simpan
@@ -932,7 +935,7 @@
 
     <!-- Footer Web -->
     <footer class="bg-slate-800 text-slate-400 py-6 text-center text-xs border-t border-slate-700 no-print">
-        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir Peserta Didik</p>
+        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir Peserta Didik.</p>
         <p class="mt-1 text-slate-500">Dikembangkan by Tim Teknis SMP Swasta Teknologi.</p>
     </footer>
 
@@ -1051,6 +1054,9 @@
                         document.getElementById('jsonViewer').textContent = JSON.stringify(payload, null, 4);
                         document.getElementById('resultPreview').classList.remove('hidden');
                         document.getElementById('resultPreview').scrollIntoView({ behavior: 'smooth' });
+
+                        // Berhasil simpan, reset form agar mendapatkan NIS baru yang acak untuk pendaftar selanjutnya
+                        resetFormOnly();
                     } catch (error) {
                         console.error("Firestore save error: ", error);
                         showAlert('error', 'Gagal Sinkronisasi', 'Gagal menyimpan ke cloud: ' + error.message);
@@ -1147,6 +1153,9 @@
                 document.getElementById('jsonViewer').textContent = JSON.stringify(payload, null, 4);
                 document.getElementById('resultPreview').classList.remove('hidden');
                 document.getElementById('resultPreview').scrollIntoView({ behavior: 'smooth' });
+
+                // Reset form & generate NIS baru
+                resetFormOnly();
             };
 
             // Override fungsi hapus lokal
@@ -1273,6 +1282,43 @@
 
             currentTab = tabId;
         }
+
+        // ==========================================
+        // FITUR OTOMATISASI GENERATOR NIS UNIK
+        // ==========================================
+        function generateUniqueNIS() {
+            const yearSuffix = "26"; // Tahun Ajaran 2026
+            const levelPrefix = "07"; // Kode Tingkat SMP Kelas 7
+            
+            // Jaminan Unik: Menggunakan milidetik waktu presisi tinggi + 3-digit acak
+            const timePart = String(Date.now()).slice(-5); 
+            const randomPart = String(Math.floor(100 + Math.random() * 900)); 
+            
+            const uniqueNIS = yearSuffix + levelPrefix + timePart + randomPart;
+            const nisInput = document.getElementById('nisInput');
+            if (nisInput) {
+                nisInput.value = uniqueNIS;
+            }
+        }
+
+        // Fungsi Reset Form & Setelan NIS baru
+        function resetFormOnly() {
+            document.getElementById('dapodikForm').reset();
+            generateUniqueNIS(); // Otomatis mengacak NIS baru untuk formulir bersih
+            
+            // Kembalikan conditional display aslinya
+            toggleKewarganegaraan('WNI');
+            toggleKip(false);
+            toggleAsalSekolah('Siswa Baru');
+            
+            closeAlert();
+        }
+        window.resetFormOnly = resetFormOnly;
+
+        // Jalankan NIS acak pertama kali saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            generateUniqueNIS();
+        });
 
         // Toggle Form Kewarganegaraan
         function toggleKewarganegaraan(val) {
@@ -1441,8 +1487,8 @@
                 { cat: "V. REGISTRASI SEKOLAH", label: "Tanggal Masuk Sekolah", val: data.tanggal_masuk },
                 { cat: "V. REGISTRASI SEKOLAH", label: "NIS (Nomor Induk Lokal)", val: data.nis },
                 { cat: "V. REGISTRASI SEKOLAH", label: "Sekolah Asal (SD/MI)", val: data.sekolah_asal || "-" },
-                { cat: "V. REGISTRASI SEKOLAH", label: "No. Seri Ijazah SD", val: data.no_ijazah || "-" },
-                { cat: "V. REGISTRASI SEKOLAH", label: "No. Peserta Ujian Jenjang Sebelumnya", val: data.no_peserta_ujian || "-" },
+                { cat: "V. REGISTRASI SEKOLAH", label: "Nomor Ijazah", val: data.nomor_ijazah || "-" },
+                { cat: "V. REGISTRASI SEKOLAH", label: "NPSN Sekolah Asal", val: data.npsn_sekolah_asal || "-" },
                 { cat: "V. REGISTRASI SEKOLAH", label: "Penerima KIP/KPS/KKS/PKH", val: data.penerima_bantuan || "Tidak" },
                 { cat: "V. REGISTRASI SEKOLAH", label: "No. Kartu Bantuan", val: data.no_kip || "-" }
             ];
@@ -1623,7 +1669,7 @@
                     "Pendidikan Ibu", "Pekerjaan Ibu", "Penghasilan Ibu", "Nama Wali", "Alamat Jalan", 
                     "RT", "RW", "Dusun", "Kelurahan", "Kecamatan", "Kode Pos", "Tempat Tinggal", 
                     "Moda Transportasi", "No HP / WA", "Email Aktif", "Jenis Pendaftaran", 
-                    "Tanggal Masuk", "NIS Lokal", "Sekolah Asal SD", "No Seri Ijazah SD", "Penerima KIP"
+                    "Tanggal Masuk", "NIS Lokal", "Sekolah Asal SD", "Nomor Ijazah", "Penerima KIP"
                 ]
             ];
 
@@ -1669,7 +1715,7 @@
                     siswa.tanggal_masuk,
                     siswa.nis,
                     siswa.sekolah_asal || "-",
-                    siswa.no_ijazah || "-",
+                    siswa.nomor_ijazah || "-",
                     siswa.penerima_bantuan || "Tidak"
                 ]);
             });
@@ -1767,7 +1813,6 @@
                 </div>
             `;
 
-            // Setup cetak draf khusus siswa ini
             printBtn.onclick = () => {
                 loadSiswaIntoForm(nisn);
                 closeDetailModal();
@@ -1863,7 +1908,7 @@
             switchTab('pribadi');
             form.scrollIntoView({ behavior: 'smooth' });
             
-            showAlert('success', 'Mode Edit Aktif', `Biodata "${data.nama}" berhasil dimuat ke formulir. Ubah data lalu tekan "Simpan ke Database".`);
+            showAlert('success', 'Mode Edit Aktif', `Biodata "${data.nama}" berhasil dimuat ke formulir. Kunci NIS tetap dipertahankan.`);
         }
 
         // Salin Teks JSON ke Clipboard
@@ -1924,6 +1969,7 @@
         window.cancelAdminAuth = cancelAdminAuth;
         window.handleAuthKeyDown = handleAuthKeyDown;
         window.logoutAdmin = logoutAdmin;
+        window.generateUniqueNIS = generateUniqueNIS;
     </script>
 </body>
 </html>
