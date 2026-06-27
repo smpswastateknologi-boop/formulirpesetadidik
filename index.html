@@ -912,14 +912,14 @@
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="p-6 space-y-4 text-xs">
-                <p class="text-slate-600 leading-relaxed mb-2">
+            <div class="p-6 space-y-4 text-xs font-medium">
+                <p class="text-slate-600 leading-relaxed mb-2 font-normal">
                     Gunakan Kunci Sinkronisasi untuk mengintegrasikan data murid secara real-time dan permanen di HP, tablet, atau perangkat lainnya.
                 </p>
                 
                 <!-- 1. Kunci Sinkronisasi Perangkat Ini -->
                 <div class="space-y-1 mb-3">
-                    <label class="block font-bold text-slate-700 uppercase tracking-wider">Kunci Sinkronisasi Perangkat Ini</label>
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px]">Kunci Sinkronisasi Perangkat Ini</label>
                     <div class="flex gap-2">
                         <input type="text" id="dbSyncKeyOutput" readonly class="w-full p-2 border border-slate-300 rounded-lg font-mono text-[10px] bg-slate-50 focus:outline-none" placeholder="Membuat kunci...">
                         <button type="button" onclick="copySyncKeyToClipboard()" class="px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center" title="Salin Kunci">
@@ -928,9 +928,20 @@
                     </div>
                 </div>
 
-                <!-- 2. Hubungkan Perangkat Lain -->
+                <!-- 2. Hubungkan Perangkat Lain (Menggunakan Hash URL Otomatis) -->
+                <div class="space-y-1 mb-3">
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px]">Tautan Sinkronisasi Otomatis Perangkat Lain</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="dbSyncUrlOutput" readonly class="w-full p-2 border border-slate-300 rounded-lg font-mono text-[10px] bg-slate-50 focus:outline-none" placeholder="Membuat tautan...">
+                        <button type="button" onclick="copySyncUrlToClipboard()" class="px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center" title="Salin Tautan">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Hubungkan Perangkat Lain -->
                 <div class="space-y-1 mb-4">
-                    <label class="block font-bold text-slate-700 uppercase tracking-wider">Hubungkan dengan Kunci Perangkat Lain</label>
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px]">Hubungkan dengan Kunci Perangkat Lain</label>
                     <div class="flex gap-2">
                         <input type="text" id="dbSyncKeyInput" class="w-full p-2 border border-slate-300 rounded-lg font-mono text-[10px] focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tempel kunci sinkronisasi perangkat lain...">
                         <button type="button" onclick="connectWithSyncKey()" class="px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg flex items-center justify-center" title="Hubungkan">
@@ -945,9 +956,9 @@
                     <div class="flex-grow border-t border-slate-200"></div>
                 </div>
 
-                <!-- 3. Manual Config -->
+                <!-- 4. Manual Config -->
                 <div>
-                    <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Kode Konfigurasi Firebase (JSON Object)</label>
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1 text-[10px]">Kode Konfigurasi Firebase (JSON Object)</label>
                     <textarea id="dbConfigTextarea" rows="4" class="w-full p-2.5 font-mono text-[10px] border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50" placeholder='{&#10;  "apiKey": "AIzaSy...",&#10;  "authDomain": "...",&#10;  "projectId": "...",&#10;  "storageBucket": "...",&#10;  "messagingSenderId": "...",&#10;  "appId": "..."&#10;}'></textarea>
                 </div>
                 
@@ -963,18 +974,24 @@
         </div>
     </div>
 
-    <!-- MODALS & APP SCRIPTS SINKRONISASI -->
-    <!-- Script Module Terpadu untuk Firebase & Interaksi Real-Time -->
+    <!-- Footer Web -->
+    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-xs border-t border-slate-700 no-print">
+        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir Murid.</p>
+        <p class="mt-1 text-slate-500">Dikembangkan by Tim Teknis SMP Swasta Teknologi.</p>
+    </footer>
+
+    <!-- Firebase SDK Imports & App Logic -->
     <script type="module">
+        // Import Firebase App dan Firestore dari CDN resmi secara murni
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Konfigurasi internal bawaan
+        // Inisialisasi Detektor Variabel Konfigurasi
         let firebaseConfig = null;
         let isUsingCustomConfig = false;
 
-        // 1. Periksa localStorage perangkat untuk database kustom
+        // 1. Cek apakah ada config kustom yang disimpan di LocalStorage perangkat ini
         const savedCustomConfig = localStorage.getItem('custom_firebase_config');
         if (savedCustomConfig) {
             try {
@@ -986,44 +1003,68 @@
             }
         }
 
-        // 2. Fallback ke database bawaan jika ada
-        if (!firebaseConfig) {
-            const default_config_bawaan = {
-                apiKey: "",
-                authDomain: "",
-                projectId: "mock-dapodik-db",
-                storageBucket: "",
-                messagingSenderId: "",
-                appId: ""
-            };
-            
-            // Periksa jika running di sandbox yang menyuplai __firebase_config
-            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                try {
-                    firebaseConfig = JSON.parse(__firebase_config);
-                } catch(e) {
-                    firebaseConfig = default_config_bawaan;
+        // 2. Deteksi parameter URL Hash untuk mengaktifkan sinkronisasi otomatis instan tanpa salin manual
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#sync=')) {
+            try {
+                const syncKeyVal = hash.replace('#sync=', '');
+                // Dekode Base64 string sync key kustom
+                const decodedStr = decodeURIComponent(escape(atob(syncKeyVal)));
+                const syncData = JSON.parse(decodedStr);
+                
+                if (syncData.config && syncData.config.apiKey) {
+                    localStorage.setItem('custom_firebase_config', JSON.stringify(syncData.config));
+                    if (syncData.appId) {
+                        localStorage.setItem('custom_app_id', syncData.appId);
+                    }
+                    firebaseConfig = syncData.config;
+                    isUsingCustomConfig = true;
+                    
+                    // Bersihkan hash URL agar rapi kembali
+                    window.location.hash = "";
+                    alert("Aplikasi Berhasil Terhubung Secara Otomatis ke Database Utama!");
                 }
-            } else {
-                firebaseConfig = default_config_bawaan;
+            } catch (err) {
+                console.error("Gagal memproses Auto-Sync otomatis dari parameter URL:", err);
             }
         }
 
-        const appId = localStorage.getItem('custom_app_id') || (typeof __app_id !== 'undefined' ? __app_id : 'smp-swasta-teknologi-dapodik');
-        let offlineData = [];
+        // 3. Jika tidak ada kustom atau auto-sync, gunakan bawaan sandbox host
+        if (!firebaseConfig && typeof __firebase_config !== 'undefined' && __firebase_config) {
+            try {
+                firebaseConfig = JSON.parse(__firebase_config);
+            } catch(e) {
+                console.error("Gagal parsing config sandbox:", e);
+            }
+        }
 
-        // Inisialisasi Firebase & Handler Database
+        // Terapkan ID Aplikasi
+        const appId = localStorage.getItem('custom_app_id') || (typeof __app_id !== 'undefined' ? __app_id : 'smp-swasta-teknologi-dapodik');
+
+        // Penampung data lokal/offline fallback
+        let offlineData = [];
+        let currentSiswaList = [];
+
+        // UI Logic Controllers, Filters, and Administration Tools
+        let currentTab = 'pribadi';
+        let currentPage = 'form';
+        let isAdminAuthenticated = false; // Status otentikasi admin sesi ini
+
+        // KUNCI SANDI PORTAL ADMIN
+        const ADMIN_DEFAULT_PASSWORD = "admin123";
+
+        // Inisialisasi Firebase jika konfigurasi valid
         if (firebaseConfig && firebaseConfig.apiKey) {
             try {
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                const db = getFirestore(app);
+                const appInstance = initializeApp(firebaseConfig);
+                const auth = getAuth(appInstance);
+                const db = getFirestore(appInstance);
 
+                // Sinkronisasi database online
                 const initDatabase = async () => {
                     const dbStatusEl = document.getElementById('dbStatus');
                     const indicator = document.getElementById('dbIndicator');
                     const badgeText = document.getElementById('dbBadgeText');
-
                     try {
                         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token && !isUsingCustomConfig) {
                             await signInWithCustomToken(auth, __initial_auth_token);
@@ -1039,29 +1080,32 @@
                         }
                         lucide.createIcons();
                         
-                        // Aktifkan pemantauan data real-time
+                        // Aktifkan sinkronisasi real-time
                         listenToSiswaData(db);
 
                     } catch (error) {
                         console.error("Database connection error: ", error);
-                        dbStatusEl.innerHTML = `<span class="text-amber-700 flex items-center"><i data-lucide="alert-triangle" class="w-4 h-4 mr-1"></i> Berjalan dalam Mode Luring (Masalah Koneksi Cloud)</span>`;
+                        dbStatusEl.innerHTML = `<span class="text-amber-700 flex items-center"><i data-lucide="alert-triangle" class="w-4 h-4 mr-1"></i> Mode Luring (Autentikasi Cloud Gagal)</span>`;
                         fallbackToOffline();
                     }
                 };
 
+                // Memantau data secara Real-Time (MANDATORY RULE 1)
                 const listenToSiswaData = (dbInstance) => {
                     const siswaCollectionRef = collection(dbInstance, 'artifacts', appId, 'public', 'data', 'siswa');
 
                     onSnapshot(siswaCollectionRef, (querySnapshot) => {
-                        const currentSiswaList = [];
+                        currentSiswaList = [];
                         querySnapshot.forEach((docSnap) => {
                             currentSiswaList.push(docSnap.data());
                         });
 
+                        // Perbarui cache data lokal
                         window.currentSiswaList = () => currentSiswaList;
+                        // Simpan salinan ke offline cache sebagai perlindungan
                         localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(currentSiswaList));
 
-                        // Perbarui jumlah badge menu admin
+                        // Perbarui badge counter navigasi admin
                         const badgeCount = document.getElementById('navBadgeCount');
                         if (badgeCount) {
                             badgeCount.textContent = currentSiswaList.length;
@@ -1070,29 +1114,40 @@
 
                         applyFilters();
                     }, (error) => {
-                        console.error("Firestore snapshot error fallback:", error);
+                        console.error("Firestore listening error: ", error);
                         fallbackToOffline();
                     });
                 };
 
+                // Daftarkan aksi submit/hapus ke cloud
                 window.saveSiswaToCloud = async (payload) => {
                     try {
                         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'siswa', payload.nisn);
                         await setDoc(docRef, payload);
-                        showAlert('success', 'Data Berhasil Disimpan!', `Biodata siswa atas nama "${payload.nama}" tersimpan aman di database cloud.`);
+                        
+                        showAlert('success', 'Data Tersimpan!', `Biodata siswa "${payload.nama}" berhasil disimpan ke cloud database.`);
+                        
+                        // Perbarui output JSON
+                        document.getElementById('jsonViewer').textContent = JSON.stringify(payload, null, 4);
+                        document.getElementById('resultPreview').classList.remove('hidden');
+                        document.getElementById('resultPreview').scrollIntoView({ behavior: 'smooth' });
+
+                        // Berhasil simpan, reset form agar mendapatkan NIS baru yang acak untuk pendaftar selanjutnya
                         resetFormOnly();
                     } catch (error) {
-                        showAlert('error', 'Gagal Sinkronisasi', 'Database cloud menolak penyimpanan: ' + error.message);
+                        console.error("Firestore save error: ", error);
+                        showAlert('error', 'Gagal Sinkronisasi', 'Gagal menyimpan ke cloud: ' + error.message);
                     }
                 };
 
                 window.deleteSiswaFromCloud = async (nisn, nama) => {
+                    // Proteksi ganda untuk proses penghapusan data
                     if (!window.checkAdminAuthSession()) {
                         showAlert('error', 'Akses Ditolak', 'Sesi admin Anda tidak valid atau telah berakhir. Harap login ulang.');
                         return;
                     }
 
-                    showAlert('success', 'Konfirmasi Penghapusan', `Apakah Anda yakin ingin menghapus data siswa "${nama}"? Klik tombol di bawah untuk menghapus.`);
+                    showAlert('success', 'Konfirmasi Penghapusan', `Apakah Anda yakin ingin menghapus data siswa "${nama}"? Klik tindakan di bawah untuk menghapus.`);
                     
                     const alertMessageEl = document.getElementById('alertMessage');
                     const confirmBtn = document.createElement('button');
@@ -1104,7 +1159,7 @@
                             await deleteDoc(docRef);
                             showAlert('success', 'Data Dihapus', `Biodata "${nama}" telah berhasil dihapus secara permanen.`);
                         } catch (error) {
-                            showAlert('error', 'Gagal Menghapus', 'Gagal menghapus dokumen cloud: ' + error.message);
+                            showAlert('error', 'Gagal Menghapus', 'Database menolak penghapusan: ' + error.message);
                         }
                     };
                     alertMessageEl.appendChild(confirmBtn);
@@ -1113,20 +1168,20 @@
                 initDatabase();
 
             } catch (err) {
-                console.error("Firebase startup crash:", err);
+                console.error("Inisialisasi Firebase Gagal: ", err);
                 fallbackToOffline();
             }
         } else {
             fallbackToOffline();
         }
 
-        // Penanganan Luring (Penyimpanan Mandiri di browser lokal)
+        // Mengatur mode penyimpanan luring/local browser jika tidak ada Firebase
         function fallbackToOffline() {
             const dbStatusEl = document.getElementById('dbStatus');
             const indicator = document.getElementById('dbIndicator');
             const badge = document.getElementById('dbBadgeText');
 
-            dbStatusEl.innerHTML = `<span class="text-amber-600 flex items-center font-medium"><i data-lucide="info" class="w-4 h-4 mr-1"></i> Aplikasi berjalan dalam Mode Luring (Data disimpan secara lokal di browser)</span>`;
+            dbStatusEl.innerHTML = `<span class="text-amber-600 flex items-center font-medium"><i data-lucide="info" class="w-4 h-4 mr-1"></i> Aplikasi berjalan dalam Mode Offline (Data disimpan secara lokal di browser ini)</span>`;
             if (indicator) {
                 indicator.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
                 badge.textContent = "LOCAL OFFLINE";
@@ -1134,6 +1189,7 @@
             }
             lucide.createIcons();
 
+            // Ambil data offline yang tersimpan di localStorage browser
             const localData = localStorage.getItem('dapodik_siswa_offline_backup');
             if (localData) {
                 try {
@@ -1143,6 +1199,7 @@
 
             window.currentSiswaList = () => offlineData;
 
+            // Perbarui badge counter navigasi admin
             const badgeCount = document.getElementById('navBadgeCount');
             if (badgeCount) {
                 badgeCount.textContent = offlineData.length;
@@ -1151,6 +1208,7 @@
 
             applyFilters();
 
+            // Override fungsi simpan ke LocalStorage saja
             window.saveSiswaToCloud = async (payload) => {
                 const index = offlineData.findIndex(s => s.nisn === payload.nisn);
                 if (index !== -1) {
@@ -1159,17 +1217,25 @@
                     offlineData.push(payload); 
                 }
                 localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(offlineData));
-                showAlert('success', 'Tersimpan Lokal!', `Biodata siswa "${payload.nama}" berhasil disimpan di memori lokal browser ini.`);
+                showAlert('success', 'Tersimpan Secara Lokal!', `Biodata siswa "${payload.nama}" berhasil disimpan di memori lokal browser ini.`);
                 
+                // Perbarui badge counter
                 if (badgeCount) {
                     badgeCount.textContent = offlineData.length;
                     badgeCount.classList.toggle('hidden', offlineData.length === 0);
                 }
 
                 applyFilters();
+
+                document.getElementById('jsonViewer').textContent = JSON.stringify(payload, null, 4);
+                document.getElementById('resultPreview').classList.remove('hidden');
+                document.getElementById('resultPreview').scrollIntoView({ behavior: 'smooth' });
+
+                // Reset form & generate NIS baru
                 resetFormOnly();
             };
 
+            // Override fungsi hapus lokal
             window.deleteSiswaFromCloud = async (nisn, nama) => {
                 if (!window.checkAdminAuthSession()) {
                     showAlert('error', 'Akses Ditolak', 'Sesi admin Anda tidak valid atau telah berakhir. Harap login ulang.');
@@ -1186,6 +1252,7 @@
                     localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(offlineData));
                     showAlert('success', 'Data Dihapus', `Data "${nama}" telah berhasil dihapus dari browser ini.`);
                     
+                    // Perbarui badge counter
                     if (badgeCount) {
                         badgeCount.textContent = offlineData.length;
                         badgeCount.classList.toggle('hidden', offlineData.length === 0);
@@ -1227,7 +1294,7 @@
             }
         };
 
-        window.openDatabaseSettings = () => {
+        window.openDbSettingsModal = () => {
             const currentSaved = localStorage.getItem('custom_firebase_config');
             document.getElementById('dbConfigTextarea').value = currentSaved || "";
             
@@ -1237,25 +1304,21 @@
                     const syncData = { config: configToEncode, appId: appId };
                     const encodedKey = btoa(unescape(encodeURIComponent(JSON.stringify(syncData))));
                     document.getElementById('dbSyncKeyOutput').value = encodedKey;
+                    
+                    // Membuat URL Tautan Sinkronisasi Otomatis secara langsung (Real-Time)
+                    const autoSyncUrl = window.location.origin + window.location.pathname + "#sync=" + encodedKey;
+                    document.getElementById('dbSyncUrlOutput').value = autoSyncUrl;
                 } else {
                     document.getElementById('dbSyncKeyOutput').value = "Inisialisasi database aktif diperlukan.";
+                    document.getElementById('dbSyncUrlOutput').value = "Database tidak terdeteksi.";
                 }
             } catch (e) {
                 document.getElementById('dbSyncKeyOutput').value = "Gagal membuat kunci sinkronisasi.";
+                document.getElementById('dbSyncUrlOutput').value = "Gagal memproses tautan otomatis.";
             }
 
             document.getElementById('dbSettingsModal').classList.remove('hidden');
         };
-    </script>
-
-    <!-- UI Logic Controllers, Filters, and Administration Tools -->
-    <script>
-        let currentTab = 'pribadi';
-        let currentPage = 'form';
-        let isAdminAuthenticated = false; // Status otentikasi admin sesi ini
-
-        // KUNCI SANDI PORTAL ADMIN (Dapat disesuaikan)
-        const ADMIN_DEFAULT_PASSWORD = "admin123";
 
         // Fungsi Perpindahan Halaman Utama (Multi-Page Switcher)
         function navigateToPage(pageId) {
@@ -1333,7 +1396,6 @@
         function checkAdminAuthSession() {
             return isAdminAuthenticated;
         }
-        window.checkAdminAuthSession = checkAdminAuthSession;
 
         // Berpindah Tab Form
         function switchTab(tabId) {
@@ -1376,7 +1438,6 @@
             
             closeAlert();
         }
-        window.resetFormOnly = resetFormOnly;
 
         // Jalankan NIS acak pertama kali saat halaman dimuat
         window.addEventListener('DOMContentLoaded', () => {
@@ -1583,493 +1644,38 @@
             const filename = `DAPODIK_SMPST_${studentNameClean}.xlsx`;
 
             XLSX.writeFile(wb, filename);
-            showAlert('success', 'Unduhan Berhasil!', `Data atas nama "${data.nama}" telah expo ke Excel: ${filename}`);
+            showAlert('success', 'Unduhan Berhasil!', `Data atas nama "${data.nama}" telah berhasil diekspor ke Excel: ${filename}`);
         }
 
-        // ==========================================
-        // FITUR SINKRONISASI & LOGIKA PANEL ADMIN
-        // ==========================================
-
-        // Menjalankan filter data siswa secara lokal
-        function applyFilters() {
-            const list = window.currentSiswaList ? window.currentSiswaList() : [];
-            const searchKeyword = document.getElementById('adminSearchInput').value.toLowerCase().trim();
-            const genderFilter = document.getElementById('adminFilterGender').value;
-            const regTypeFilter = document.getElementById('adminFilterRegType').value;
-
-            // Kalkulasi Statistik Keseluruhan
-            calculateStatistics(list);
-
-            // Filter data secara lokal/memori (No complex queries)
-            const filteredList = list.filter(siswa => {
-                const matchSearch = !searchKeyword || 
-                    siswa.nama.toLowerCase().includes(searchKeyword) || 
-                    siswa.nisn.includes(searchKeyword);
-                
-                const matchGender = genderFilter === 'ALL' || siswa.jk === genderFilter;
-                
-                const matchRegType = regTypeFilter === 'ALL' || siswa.jenis_pendaftaran === regTypeFilter;
-
-                return matchSearch && matchGender && matchRegType;
-            });
-
-            // Render hasil filter ke baris tabel
-            renderAdminTable(filteredList);
-        }
-
-        // Menghitung statistik berdasarkan data dari cloud
-        function calculateStatistics(list) {
-            document.getElementById('statTotal').textContent = list.length;
-            
-            const males = list.filter(s => s.jk === 'L').length;
-            document.getElementById('statMale').textContent = males;
-
-            const females = list.filter(s => s.jk === 'P').length;
-            document.getElementById('statFemale').textContent = females;
-
-            const bantuan = list.filter(s => s.penerima_bantuan === 'Ya').length;
-            document.getElementById('statBantuan').textContent = bantuan;
-        }
-
-        // Menggambar baris tabel di Panel Admin
-        function renderAdminTable(dataList) {
-            const listBody = document.getElementById('studentTableBody');
-            const loadingRow = document.getElementById('tableLoadingRow');
-            const emptyRow = document.getElementById('tableEmptyRow');
-
-            if (loadingRow) loadingRow.classList.add('hidden');
-
-            // Bersihkan sisa baris lama
-            const rows = listBody.querySelectorAll('.siswa-data-row');
-            rows.forEach(r => r.remove());
-
-            if (dataList.length === 0) {
-                emptyRow.classList.remove('hidden');
-                return;
-            }
-
-            emptyRow.classList.add('hidden');
-
-            dataList.forEach((data) => {
-                const tr = document.createElement('tr');
-                tr.className = 'siswa-data-row hover:bg-slate-50 transition-colors text-slate-700';
-                tr.innerHTML = `
-                    <td class="py-3 px-6">
-                        <div class="font-semibold text-slate-900">${data.nama}</div>
-                        <div class="text-xxs text-slate-400 mt-0.5">${data.email}</div>
-                    </td>
-                    <td class="py-3 px-6">
-                        <div class="font-mono text-xs text-indigo-700 font-semibold">${data.nisn}</div>
-                        <div class="text-xxs text-slate-400 mt-0.5">NIS: ${data.nis || '-'}</div>
-                    </td>
-                    <td class="py-3 px-6">
-                        <span class="px-2 py-0.5 rounded text-xs font-bold ${data.jk === 'L' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}">
-                            ${data.jk}
-                        </span>
-                    </td>
-                    <td class="py-3 px-6 text-xs font-medium">${data.sekolah_asal || '-'}</td>
-                    <td class="py-3 px-6">
-                        <div class="font-mono text-xs">${data.no_hp}</div>
-                        <div class="text-xxs text-slate-400 mt-0.5">${data.tempat_tinggal}</div>
-                    </td>
-                    <td class="py-3 px-6 text-right whitespace-nowrap space-x-1.5">
-                        <button type="button" onclick="openDetailModal('${data.nisn}')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
-                            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Detail
-                        </button>
-                        <button type="button" onclick="exportSingleStudentToExcel('${data.nisn}')" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1" title="Unduh Excel Siswa Ini">
-                            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Excel
-                        </button>
-                        <button type="button" onclick="loadSiswaIntoFormAndEdit('${data.nisn}')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
-                            <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
-                        </button>
-                        <button type="button" onclick="deleteSiswaFromCloud('${data.nisn}', '${data.nama}')" class="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs rounded-lg transition-colors font-semibold flex inline-flex items-center gap-1">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
-                        </button>
-                    </td>
-                `;
-                listBody.appendChild(tr);
-            });
-
-            lucide.createIcons();
-        }
-
-        // Pembantu memuat data dan mengalihkan view ke formulir
-        function loadSiswaIntoFormAndEdit(nisn) {
-            if (!isAdminAuthenticated) {
-                showAlert('error', 'Akses Ditolak', 'Harap login terlebih dahulu untuk mengedit data.');
-                return;
-            }
-            loadSiswaIntoForm(nisn);
-            navigateToPage('form');
-        }
-
-        // Ekspor MASSAL Seluruh Dokumen Siswa di Database ke Excel
-        function exportAllStudentsToExcel() {
-            if (!isAdminAuthenticated) {
-                showAlert('error', 'Akses Ditolak', 'Harap login terlebih dahulu untuk melakukan ekspor massal.');
-                return;
-            }
-
-            const list = window.currentSiswaList ? window.currentSiswaList() : [];
-            if (list.length === 0) {
-                showAlert('error', 'Gagal Ekspor', 'Tidak ada data siswa terdaftar di database untuk diekspor.');
-                return;
-            }
-
-            const timestampStr = new Date().toLocaleDateString('id-ID', {
-                year: 'numeric', month: 'long', day: 'numeric'
-            });
-
-            const worksheetData = [
-                ["SMP SWASTA TEKNOLOGI - REKAPITULASI DATA SINKRONISASI DAPODIK MASAL"],
-                [`NPSN: 69952421 | Alamat: Jl. Poros Wisata Meleura, Desa Lakarinta | Tanggal Laporan: ${timestampStr}`],
-                [],
-                [
-                    "No", "Nama Lengkap Siswa", "Jenis Kelamin", "NISN", "NIK", "Tempat Lahir", 
-                    "Tanggal Lahir", "No Registrasi Akta", "Agama", "Kewarganegaraan", "Kebutuhan Khusus", 
-                    "Jml Saudara", "Nama Ayah", "NIK Ayah", "Tahun Lahir Ayah", "Pendidikan Ayah", 
-                    "Pekerjaan Ayah", "Penghasilan Ayah", "Nama Ibu", "NIK Ibu", "Tahun Lahir Ibu", 
-                    "Pendidikan Ibu", "Pekerjaan Ibu", "Penghasilan Ibu", "Nama Wali", "Alamat Jalan", 
-                    "RT", "RW", "Dusun", "Kelurahan", "Kecamatan", "Kode Pos", "Tempat Tinggal", 
-                    "Moda Transportasi", "No HP / WA", "Email Aktif", "Jenis Pendaftaran", 
-                    "Tanggal Masuk", "NIS", "Sekolah Asal SD", "Nomor Ijazah", "NPSN Sekolah Asal", "Penerima KIP"
-                ]
-            ];
-
-            list.forEach((siswa, index) => {
-                worksheetData.push([
-                    index + 1,
-                    siswa.nama,
-                    siswa.jk === 'L' ? 'Laki-laki' : 'Perempuan',
-                    siswa.nisn,
-                    siswa.nik,
-                    siswa.tempat_lahir,
-                    siswa.tanggal_lahir,
-                    siswa.no_akta || "-",
-                    siswa.agama,
-                    siswa.kewarganegaraan,
-                    siswa.kebutuhan_khusus || "Tidak",
-                    siswa.jumlah_saudara || "0",
-                    siswa.nama_ayah,
-                    siswa.nik_ayah || "-",
-                    siswa.tahun_lahir_ayah,
-                    siswa.pendidikan_ayah,
-                    siswa.pekerjaan_ayah,
-                    siswa.penghasilan_ayah,
-                    siswa.nama_ibu,
-                    siswa.nik_ibu || "-",
-                    siswa.tahun_lahir_ibu,
-                    siswa.pendidikan_ibu,
-                    siswa.pekerjaan_ibu,
-                    siswa.penghasilan_ibu,
-                    siswa.nama_wali || "-",
-                    siswa.alamat_jalan,
-                    siswa.rt,
-                    siswa.rw,
-                    siswa.dusun || "-",
-                    siswa.kelurahan,
-                    siswa.kecamatan,
-                    siswa.kode_pos,
-                    siswa.tempat_tinggal,
-                    siswa.transportasi || "-",
-                    siswa.no_hp,
-                    siswa.email,
-                    siswa.jenis_pendaftaran,
-                    siswa.tanggal_masuk,
-                    siswa.nis,
-                    siswa.sekolah_asal || "-",
-                    siswa.no_ijazah || "-",
-                    siswa.no_peserta_ujian || "-",
-                    siswa.penerima_bantuan || "Tidak"
-                ]);
-            });
-
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-
-            ws['!cols'] = Array(42).fill({ wch: 20 });
-            ws['!cols'][1] = { wch: 30 }; 
-
-            XLSX.utils.book_append_sheet(wb, ws, "Rekap Dapodik Siswa");
-            
-            const filename = `REKAP_DAPODIK_SMP_TEKNOLOGI_${new Date().getFullYear()}.xlsx`;
-            XLSX.writeFile(wb, filename);
-
-            showAlert('success', 'Ekspor Berhasil!', `Sebanyak ${list.length} data siswa terdaftar berhasil diekspor ke file Excel: ${filename}`);
-        }
-
-        // Membuka Jendela Modal Detail Lengkap Biodata Siswa
-        function openDetailModal(nisn) {
-            const list = window.currentSiswaList ? window.currentSiswaList() : [];
-            const siswa = list.find(s => s.nisn === textToId(nisn)); 
-            const dataSiswa = siswa || list.find(s => s.nisn === nisn);
-            if (!dataSiswa) return;
-
-            const modal = document.getElementById('detailSiswaModal');
-            const content = document.getElementById('modalDetailContent');
-            const printBtn = document.getElementById('modalPrintBtn');
-            const excelBtn = document.getElementById('modalExcelBtn');
-
-            content.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Sektor I: Data Diri -->
-                    <div class="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-100">
-                        <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wider text-indigo-700 border-b border-indigo-100 pb-1.5 flex items-center gap-1.5">
-                            <i data-lucide="user" class="w-4 h-4"></i> I. BIODATA PRIBADI SISWA
-                        </h5>
-                        <div class="grid grid-cols-3 gap-y-2 text-xs">
-                            <span class="text-slate-400 font-medium">Nama Lengkap</span>
-                            <span class="col-span-2 text-slate-900 font-bold">: ${dataSiswa.nama}</span>
-                            <span class="text-slate-400 font-medium">NISN</span>
-                            <span class="col-span-2 text-slate-900 font-mono font-semibold">: ${dataSiswa.nisn}</span>
-                            <span class="text-slate-400 font-medium">NIK KTP/KK</span>
-                            <span class="col-span-2 text-slate-900 font-mono">: ${dataSiswa.nik}</span>
-                            <span class="text-slate-400 font-medium">Jenis Kelamin</span>
-                            <span class="col-span-2 text-slate-900">: ${dataSiswa.jk === 'L' ? 'Laki-laki' : 'Perempuan'}</span>
-                            <span class="text-slate-400 font-medium">Tempat, Tgl Lahir</span>
-                            <span class="col-span-2 text-slate-900">: ${dataSiswa.tempat_lahir}, ${dataSiswa.tanggal_lahir}</span>
-                            <span class="text-slate-400 font-medium">Agama</span>
-                            <span class="col-span-2 text-slate-900">: ${dataSiswa.agama}</span>
-                            <span class="text-slate-400 font-medium">Keb. Khusus</span>
-                            <span class="col-span-2 text-slate-900">: ${dataSiswa.kebutuhan_khusus}</span>
-                        </div>
-                    </div>
-
-                    <!-- Sektor II: Data Registrasi -->
-                    <div class="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-100">
-                        <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wider text-indigo-700 border-b border-indigo-100 pb-1.5 flex items-center gap-1.5">
-                            <i data-lucide="award" class="w-4 h-4"></i> II. REGISTRASI & ASAL SEKOLAH
-                        </h5>
-                        <div class="grid grid-cols-3 gap-y-2 text-xs">
-                            <span class="text-slate-400 font-medium">Jenis Pendaftaran</span>
-                            <span class="col-span-2 text-slate-900 font-semibold">: ${dataSiswa.jenis_pendaftaran}</span>
-                            <span class="text-slate-400 font-medium">Tanggal Masuk</span>
-                            <span class="col-span-2 text-slate-900">: ${dataSiswa.tanggal_masuk}</span>
-                            <span class="text-slate-400 font-medium">NIS Lokal</span>
-                            <span class="col-span-2 text-slate-900 font-bold text-indigo-700">: ${dataSiswa.nis}</span>
-                            <span class="text-slate-400 font-medium">Sekolah Asal</span>
-                            <span class="col-span-2 text-slate-900">: ${dataSiswa.sekolah_asal || '-'}</span>
-                            <span class="text-slate-400 font-medium">Nomor Ijazah</span>
-                            <span class="col-span-2 text-slate-900 font-mono">: ${dataSiswa.no_ijazah || '-'}</span>
-                            <span class="text-slate-400 font-medium">NPSN Sekolah Asal</span>
-                            <span class="col-span-2 text-slate-900 font-mono">: ${dataSiswa.no_peserta_ujian || '-'}</span>
-                            <span class="text-slate-400 font-medium">Penerima KIP</span>
-                            <span class="col-span-2 text-slate-900">: ${dataSiswa.penerima_bantuan}</span>
-                        </div>
-                    </div>
-
-                    <!-- Sektor III: Data Orang Tua -->
-                    <div class="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-100 md:col-span-2">
-                        <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wider text-indigo-700 border-b border-indigo-100 pb-1.5 flex items-center gap-1.5">
-                            <i data-lucide="users" class="w-4 h-4"></i> III. IDENTITAS ORANG TUA KANDUNG & WALI
-                        </h5>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                            <div>
-                                <p class="font-bold text-slate-600 border-b pb-0.5">Ayah Kandung</p>
-                                <p class="mt-1">Nama: <span class="font-semibold text-slate-800">${dataSiswa.nama_ayah}</span></p>
-                                <p>Pendidikan: ${dataSiswa.pendidikan_ayah}</p>
-                                <p>Pekerjaan: ${dataSiswa.pekerjaan_ayah}</p>
-                            </div>
-                            <div>
-                                <p class="font-bold text-slate-600 border-b pb-0.5">Ibu Kandung</p>
-                                <p class="mt-1">Nama: <span class="font-semibold text-slate-800">${dataSiswa.nama_ibu}</span></p>
-                                <p>Pendidikan: ${dataSiswa.pendidikan_ibu}</p>
-                                <p>Pekerjaan: ${dataSiswa.pekerjaan_ibu}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            printBtn.onclick = () => {
-                loadSiswaIntoForm(nisn);
-                closeDetailModal();
-                setTimeout(() => {
-                    printForm();
-                }, 300);
-            };
-
-            // Setup download excel khusus siswa ini
-            excelBtn.onclick = () => {
-                exportSingleStudentToExcel(nisn);
-            };
-
-            modal.classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailSiswaModal').classList.add('hidden');
-        }
-
-        // Logika Pengaturan Modul Cloud Database Admin
-        function openDatabaseSettings() {
-            const currentSaved = localStorage.getItem('custom_firebase_config');
-            document.getElementById('dbConfigTextarea').value = currentSaved || "";
-            
-            // Generate Sync Key untuk disalin oleh pengguna
-            try {
-                const configToEncode = currentSaved ? JSON.parse(currentSaved) : firebaseConfig;
-                if (configToEncode) {
-                    const syncData = { config: configToEncode, appId: appId };
-                    const encodedKey = btoa(unescape(encodeURIComponent(JSON.stringify(syncData))));
-                    document.getElementById('dbSyncKeyOutput').value = encodedKey;
-                } else {
-                    document.getElementById('dbSyncKeyOutput').value = "Inisialisasi database aktif diperlukan.";
-                }
-            } catch (e) {
-                document.getElementById('dbSyncKeyOutput').value = "Gagal membuat kunci sinkronisasi.";
-            }
-
-            document.getElementById('dbSettingsModal').classList.remove('hidden');
-        }
-
-        function closeDbSettingsModal() {
-            document.getElementById('dbSettingsModal').classList.add('hidden');
-        }
-
-        function saveCustomDbConfig() {
-            const val = document.getElementById('dbConfigTextarea').value.trim();
-            if(!val) {
-                showAlert('error', 'Konfigurasi Kosong', 'Harap masukkan kode JSON Firebase yang valid.');
-                return;
-            }
-            try {
-                JSON.parse(val); 
-                localStorage.setItem('custom_firebase_config', val);
-                closeDbSettingsModal();
-                showAlert('success', 'Konfigurasi Database Disimpan', 'Konfigurasi database kustom disimpan. Aplikasi akan memuat ulang halaman...');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-            } catch(err) {
-                showAlert('error', 'Format JSON Tidak Valid', 'Kode yang Anda masukkan tidak sesuai standar JSON Object.');
-            }
-        }
-
-        // Menghubungkan perangkat lain menggunakan Kunci Sinkronisasi (Sync Key)
-        function connectWithSyncKey() {
-            const syncKeyVal = document.getElementById('dbSyncKeyInput').value.trim();
-            if (!syncKeyVal) {
-                showAlert('error', 'Kunci Kosong', 'Silakan tempel Kunci Sinkronisasi dari perangkat Anda yang lain.');
-                return;
-            }
-            try {
-                const decodedStr = decodeURIComponent(escape(atob(syncKeyVal)));
-                const syncData = JSON.parse(decodedStr);
-                
-                if (syncData.config && syncData.config.apiKey) {
-                    localStorage.setItem('custom_firebase_config', JSON.stringify(syncData.config));
-                    // Jika appId disematkan, kita simpan juga
-                    if (syncData.appId) {
-                        localStorage.setItem('custom_app_id', syncData.appId);
-                    }
-                    closeDbSettingsModal();
-                    showAlert('success', 'Sinkronisasi Berhasil!', 'Perangkat ini kini terintegrasi secara permanen dengan database cloud Anda. Memuat ulang...');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                } else {
-                    throw new Error("Skema konfigurasi salah.");
-                }
-            } catch (err) {
-                showAlert('error', 'Gagal Menghubungkan', 'Kunci Sinkronisasi tidak valid. Pastikan Anda menyalin seluruh teks dengan lengkap.');
-            }
-        }
-
-        // Salin Kunci Sinkronisasi Perangkat ke Clipboard
+        // Prosedur Menyalin Kunci Sinkronisasi ke Clipboard
         function copySyncKeyToClipboard() {
             const keyOutput = document.getElementById('dbSyncKeyOutput');
-            keyOutput.select();
-            try {
-                document.execCommand('copy');
-                showAlert('success', 'Berhasil Disalin!', 'Kunci Sinkronisasi telah disalin. Tempel kunci ini pada menu Pengaturan DB perangkat kedua Anda.');
-            } catch (err) {
-                showAlert('error', 'Gagal Menyalin', 'Harap salin kunci secara manual.');
+            if (keyOutput) {
+                keyOutput.select();
+                try {
+                    document.execCommand('copy');
+                    showAlert('success', 'Berhasil Disalin!', 'Kunci Sinkronisasi telah disalin ke clipboard.');
+                } catch (err) {
+                    showAlert('error', 'Gagal Menyalin', 'Harap salin kunci secara manual.');
+                }
             }
         }
 
-        function clearCustomDbConfig() {
-            localStorage.removeItem('custom_firebase_config');
-            localStorage.removeItem('custom_app_id');
-            closeDbSettingsModal();
-            showAlert('success', 'Database Reset Berhasil', 'Konfigurasi kustom dihapus. Menggunakan database bawaan host, memuat ulang...');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        }
-
-        function textToId(text) {
-            return text ? text.replace(/[^a-zA-Z0-9]/g, "") : "";
-        }
-
-        // Memuat data siswa kembali dari cache lokal ke formulir edit
-        function loadSiswaIntoForm(nisn) {
-            const list = window.currentSiswaList ? window.currentSiswaList() : [];
-            const data = list.find(s => s.nisn === nisn);
-            if (!data) return;
-
-            const form = document.getElementById('dapodikForm');
-            
-            Object.keys(data).forEach(key => {
-                const input = form.elements[key];
-                if (input) {
-                    if (input.type === 'radio') {
-                        const radioOpts = form.querySelectorAll(`[name="${key}"]`);
-                        radioOpts.forEach(radio => {
-                            if (radio.value === data[key]) {
-                                radio.checked = true;
-                            }
-                        });
-                    } else {
-                        input.value = data[key];
-                    }
+        // Prosedur Menyalin Tautan Sinkronisasi ke Clipboard
+        function copySyncUrlToClipboard() {
+            const urlOutput = document.getElementById('dbSyncUrlOutput');
+            if (urlOutput) {
+                urlOutput.select();
+                try {
+                    document.execCommand('copy');
+                    showAlert('success', 'Berhasil Disalin!', 'Tautan Sinkronisasi otomatis telah disalin ke clipboard.');
+                } catch (err) {
+                    showAlert('error', 'Gagal Menyalin', 'Harap salin tautan secara manual.');
                 }
-            });
-
-            toggleKewarganegaraan(data.kewarganegaraan);
-            toggleKip(data.penerima_bantuan === 'Ya');
-            toggleAsalSekolah(data.jenis_pendaftaran);
-
-            switchTab('pribadi');
-            form.scrollIntoView({ behavior: 'smooth' });
-            
-            showAlert('success', 'Mode Edit Aktif', `Biodata "${data.nama}" berhasil dimuat ke formulir. Kunci NIS tetap dipertahankan.`);
-        }
-
-        // Salin Teks JSON ke Clipboard
-        function copyJsonToClipboard() {
-            const jsonText = document.getElementById('jsonViewer').textContent;
-            const textarea = document.createElement('textarea');
-            textarea.value = jsonText;
-            textarea.style.position = 'fixed'; 
-            document.body.appendChild(textarea);
-            textarea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showAlert('success', 'Salin Berhasil', 'Data JSON F-PD berhasil disalin ke clipboard.');
-                } else {
-                    showAlert('error', 'Salin Gagal', 'Gagal menyalin data.');
-                }
-            } catch (err) {
-                showAlert('error', 'Kesalahan Sistem', 'Browser menolak akses klipboard.');
             }
-            
-            document.body.removeChild(textarea);
         }
 
-        // Cetak Formulir
-        function printForm() {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('hidden'));
-            setTimeout(() => {
-                window.print();
-                switchTab(currentTab);
-            }, 500);
-        }
-
-        // Ekspos fungsi utilitas ke global scope
+        // Gantungkan fungsi ke window global untuk eksekusi yang aman
         window.switchTab = switchTab;
         window.toggleKewarganegaraan = toggleKewarganegaraan;
         window.toggleKip = toggleKip;
@@ -2086,7 +1692,7 @@
         window.closeDetailModal = closeDetailModal;
         window.loadSiswaIntoForm = loadSiswaIntoForm;
         window.loadSiswaIntoFormAndEdit = loadSiswaIntoFormAndEdit;
-        window.openDbSettingsModal = openDatabaseSettings;
+        window.openDbSettingsModal = openDbSettingsModal;
         window.closeDbSettingsModal = closeDbSettingsModal;
         window.saveCustomDbConfig = saveCustomDbConfig;
         window.clearCustomDbConfig = clearCustomDbConfig;
@@ -2097,7 +1703,9 @@
         window.logoutAdmin = logoutAdmin;
         window.generateUniqueNIS = generateUniqueNIS;
         window.copySyncKeyToClipboard = copySyncKeyToClipboard;
+        window.copySyncUrlToClipboard = copySyncUrlToClipboard;
         window.connectWithSyncKey = connectWithSyncKey;
+        window.resetFormOnly = resetFormOnly;
     </script>
 </body>
 </html>
