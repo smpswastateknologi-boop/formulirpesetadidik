@@ -645,7 +645,7 @@
                                     <span class="ml-2">Ya</span>
                                 </label>
                                 <label class="flex items-center text-sm cursor-pointer">
-                                    <input type="radio" name="penerima_bantuan" value="Tidak" checked onchange="toggleKip(false)" class="w-4 h-4 text-indigo-600 border-slate-300 focus:ring-indigo-500">
+                                    <input type="radio" name="penerima_bantuan" value="Never" checked onchange="toggleKip(false)" class="w-4 h-4 text-indigo-600 border-slate-300 focus:ring-indigo-500">
                                     <span class="ml-2">Tidak</span>
                                 </label>
                             </div>
@@ -974,12 +974,6 @@
         </div>
     </div>
 
-    <!-- Footer Web -->
-    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-xs border-t border-slate-700 no-print">
-        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir Murid.</p>
-        <p class="mt-1 text-slate-500">Dikembangkan by Tim Teknis SMP Swasta Teknologi.</p>
-    </footer>
-
     <!-- Firebase SDK Imports & App Logic -->
     <script type="module">
         // Import Firebase App dan Firestore dari CDN resmi secara murni
@@ -990,6 +984,18 @@
         // Inisialisasi Detektor Variabel Konfigurasi
         let firebaseConfig = null;
         let isUsingCustomConfig = false;
+
+        // Penampung data lokal/offline fallback
+        let offlineData = [];
+        let currentSiswaList = [];
+
+        // UI Logic Controllers, Filters, and Administration Tools
+        let currentTab = 'pribadi';
+        let currentPage = 'form';
+        let isAdminAuthenticated = false; // Status otentikasi admin sesi ini
+
+        // KUNCI SANDI PORTAL ADMIN
+        const ADMIN_DEFAULT_PASSWORD = "admin123";
 
         // 1. Cek apakah ada config kustom yang disimpan di LocalStorage perangkat ini
         const savedCustomConfig = localStorage.getItem('custom_firebase_config');
@@ -1041,17 +1047,14 @@
         // Terapkan ID Aplikasi
         const appId = localStorage.getItem('custom_app_id') || (typeof __app_id !== 'undefined' ? __app_id : 'smp-swasta-teknologi-dapodik');
 
-        // Penampung data lokal/offline fallback
-        let offlineData = [];
-        let currentSiswaList = [];
-
-        // UI Logic Controllers, Filters, and Administration Tools
-        let currentTab = 'pribadi';
-        let currentPage = 'form';
-        let isAdminAuthenticated = false; // Status otentikasi admin sesi ini
-
-        // KUNCI SANDI PORTAL ADMIN
-        const ADMIN_DEFAULT_PASSWORD = "admin123";
+        // Fungsi Cetak Formulir - Sekarang dideklarasikan di lingkup teratas modul
+        function printForm() {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('hidden'));
+            setTimeout(() => {
+                window.print();
+                switchTab(currentTab);
+            }, 500);
+        }
 
         // Inisialisasi Firebase jika konfigurasi valid
         if (firebaseConfig && firebaseConfig.apiKey) {
@@ -1265,7 +1268,7 @@
         }
 
         // Prosedur Kunci Sinkronisasi Antar Perangkat
-        window.connectWithSyncKey = () => {
+        function connectWithSyncKey() {
             const syncKeyVal = document.getElementById('dbSyncKeyInput').value.trim();
             if (!syncKeyVal) {
                 showAlert('error', 'Kunci Sinkronisasi Kosong', 'Silakan tempel Kunci Sinkronisasi dari perangkat Anda yang lain.');
@@ -1292,9 +1295,9 @@
             } catch (err) {
                 showAlert('error', 'Kunci Tidak Valid', 'Gagal memproses kunci sinkronisasi. Pastikan Anda menyalin seluruh teks dengan lengkap.');
             }
-        };
+        }
 
-        window.openDbSettingsModal = () => {
+        function openDbSettingsModal() {
             const currentSaved = localStorage.getItem('custom_firebase_config');
             document.getElementById('dbConfigTextarea').value = currentSaved || "";
             
@@ -1318,7 +1321,7 @@
             }
 
             document.getElementById('dbSettingsModal').classList.remove('hidden');
-        };
+        }
 
         // Fungsi Perpindahan Halaman Utama (Multi-Page Switcher)
         function navigateToPage(pageId) {
@@ -1438,11 +1441,6 @@
             
             closeAlert();
         }
-
-        // Jalankan NIS acak pertama kali saat halaman dimuat
-        window.addEventListener('DOMContentLoaded', () => {
-            generateUniqueNIS();
-        });
 
         // Toggle Form Kewarganegaraan
         function toggleKewarganegaraan(val) {
@@ -1600,7 +1598,7 @@
                 { cat: "IV. ALAMAT & GEOGRAFIS", label: "Nama Dusun", val: data.dusun || "-" },
                 { cat: "IV. ALAMAT & GEOGRAFIS", label: "Kelurahan/Desa", val: data.kelurahan },
                 { cat: "IV. ALAMAT & GEOGRAFIS", label: "Kecamatan", val: data.kecamatan },
-                { cat: "IV. ALAMAT & GEOGRAFIS", label: "Kode Pos", val: data.kode_pos },
+                { cat: "IV. ALAMAT & GEOGRAFIS", blockLabel: "Kode Pos", val: data.kode_pos },
                 { cat: "IV. ALAMAT & GEOGRAFIS", label: "Status Tempat Tinggal", val: data.tempat_tinggal },
                 { cat: "IV. ALAMAT & GEOGRAFIS", label: "Moda Transportasi", val: data.transportasi || "-" },
                 { cat: "IV. ALAMAT & GEOGRAFIS", label: "Nomor Telepon Rumah", val: data.telp_rumah || "-" },
@@ -1625,7 +1623,7 @@
             ];
 
             mapping.forEach(item => {
-                worksheetData.push([item.cat, item.label, item.val]);
+                worksheetData.push([item.cat, item.label || item.blockLabel, item.val]);
             });
 
             const wb = XLSX.utils.book_new();
@@ -1675,7 +1673,7 @@
             }
         }
 
-        // Gantungkan fungsi ke window global untuk eksekusi yang aman
+        // Gantungkan fungsi ke window global untuk eksekusi yang aman dan responsif
         window.switchTab = switchTab;
         window.toggleKewarganegaraan = toggleKewarganegaraan;
         window.toggleKip = toggleKip;
@@ -1706,6 +1704,7 @@
         window.copySyncUrlToClipboard = copySyncUrlToClipboard;
         window.connectWithSyncKey = connectWithSyncKey;
         window.resetFormOnly = resetFormOnly;
+        window.checkAdminAuthSession = checkAdminAuthSession;
     </script>
 </body>
 </html>
