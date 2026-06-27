@@ -107,7 +107,7 @@
                 <i data-lucide="database" class="w-4 h-4 text-blue-600"></i>
                 <span id="dbStatus">Menginisialisasi sistem basis data...</span>
             </div>
-            <span class="text-xs text-slate-500">Aplikasi Data Peserta Didik SMP Swasta Teknologi.</span>
+            <span class="text-xs text-slate-500">Aplikasi Data Murid SMP Swasta Teknologi.</span>
         </div>
     </div>
 
@@ -399,8 +399,7 @@
                             <!-- Pekerjaan Ibu -->
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Pekerjaan Ibu <span class="text-rose-500">*</span></label>
-                                <select name="pekerjaan_ibu" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
-                                    <option value="">-- Pilih Pekerjaan --</option>
+                                <select name="pekeep_ibu" required id="pekerjaan_ibu" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
                                     <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
                                     <option value="PNS">PNS (Pegawai Negeri Sipil)</option>
                                     <option value="TNI/Polri">TNI/Polri</option>
@@ -964,61 +963,67 @@
         </div>
     </div>
 
-    <!-- Footer Web -->
-    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-xs border-t border-slate-700 no-print">
-        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir Peserta Didik.</p>
-        <p class="mt-1 text-slate-500">Dikembangkan by Tim Teknis SMP Swasta Teknologi.</p>
-    </footer>
-
-    <!-- Firebase SDK Imports & App Logic -->
+    <!-- MODALS & APP SCRIPTS SINKRONISASI -->
+    <!-- Script Module Terpadu untuk Firebase & Interaksi Real-Time -->
     <script type="module">
-        // Import Firebase App dan Firestore dari CDN resmi
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Inisialisasi Detektor Variabel Konfigurasi
+        // Konfigurasi internal bawaan
         let firebaseConfig = null;
         let isUsingCustomConfig = false;
 
-        // 1. Cek apakah ada config kustom yang disimpan di LocalStorage perangkat ini
+        // 1. Periksa localStorage perangkat untuk database kustom
         const savedCustomConfig = localStorage.getItem('custom_firebase_config');
         if (savedCustomConfig) {
             try {
                 firebaseConfig = JSON.parse(savedCustomConfig);
                 isUsingCustomConfig = true;
-                console.log("Menggunakan konfigurasi kustom Firebase dari localStorage.");
+                console.log("Database kustom dimuat dari penyimpanan lokal.");
             } catch(e) {
                 console.error("Gagal parsing config kustom:", e);
             }
         }
 
-        // 2. Jika tidak ada config kustom, coba pakai config bawaan sandbox host
-        if (!firebaseConfig && typeof __firebase_config !== 'undefined' && __firebase_config) {
-            try {
-                firebaseConfig = JSON.parse(__firebase_config);
-            } catch(e) {
-                console.error("Gagal parsing config sandbox:", e);
+        // 2. Fallback ke database bawaan jika ada
+        if (!firebaseConfig) {
+            const default_config_bawaan = {
+                apiKey: "",
+                authDomain: "",
+                projectId: "mock-dapodik-db",
+                storageBucket: "",
+                messagingSenderId: "",
+                appId: ""
+            };
+            
+            // Periksa jika running di sandbox yang menyuplai __firebase_config
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                try {
+                    firebaseConfig = JSON.parse(__firebase_config);
+                } catch(e) {
+                    firebaseConfig = default_config_bawaan;
+                }
+            } else {
+                firebaseConfig = default_config_bawaan;
             }
         }
 
-        // Terapkan ID Aplikasi
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'smp-swasta-teknologi-dapodik';
-
-        // Penampung data lokal/offline fallback
+        const appId = localStorage.getItem('custom_app_id') || (typeof __app_id !== 'undefined' ? __app_id : 'smp-swasta-teknologi-dapodik');
         let offlineData = [];
 
-        // Inisialisasi Firebase jika konfigurasi valid
+        // Inisialisasi Firebase & Handler Database
         if (firebaseConfig && firebaseConfig.apiKey) {
             try {
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth(app);
                 const db = getFirestore(app);
 
-                // Sinkronisasi database online
                 const initDatabase = async () => {
                     const dbStatusEl = document.getElementById('dbStatus');
-                    const indicator = document.querySelector('.animate-pulse');
+                    const indicator = document.getElementById('dbIndicator');
+                    const badgeText = document.getElementById('dbBadgeText');
+
                     try {
                         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token && !isUsingCustomConfig) {
                             await signInWithCustomToken(auth, __initial_auth_token);
@@ -1029,22 +1034,21 @@
                         dbStatusEl.innerHTML = `<span class="text-emerald-700 flex items-center font-semibold"><i data-lucide="cloud-check" class="w-4 h-4 mr-1"></i> Terhubung ke Cloud Database (Sinkronisasi Real-Time Aktif)</span>`;
                         if (indicator) {
                             indicator.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
-                            document.getElementById('dbBadgeText').textContent = "CLOUD ACTIVE";
-                            document.getElementById('dbBadgeText').className = "text-xs font-semibold tracking-wider text-emerald-300";
+                            badgeText.textContent = "CLOUD ACTIVE";
+                            badgeText.className = "text-xs font-semibold tracking-wider text-emerald-300";
                         }
                         lucide.createIcons();
                         
-                        // Aktifkan sinkronisasi real-time
+                        // Aktifkan pemantauan data real-time
                         listenToSiswaData(db);
 
                     } catch (error) {
                         console.error("Database connection error: ", error);
-                        dbStatusEl.innerHTML = `<span class="text-amber-700 flex items-center"><i data-lucide="alert-triangle" class="w-4 h-4 mr-1"></i> Mode Luring (Autentikasi Cloud Gagal)</span>`;
+                        dbStatusEl.innerHTML = `<span class="text-amber-700 flex items-center"><i data-lucide="alert-triangle" class="w-4 h-4 mr-1"></i> Berjalan dalam Mode Luring (Masalah Koneksi Cloud)</span>`;
                         fallbackToOffline();
                     }
                 };
 
-                // Memantau data secara Real-Time (MANDATORY RULE 1)
                 const listenToSiswaData = (dbInstance) => {
                     const siswaCollectionRef = collection(dbInstance, 'artifacts', appId, 'public', 'data', 'siswa');
 
@@ -1054,12 +1058,10 @@
                             currentSiswaList.push(docSnap.data());
                         });
 
-                        // Perbarui cache data lokal
                         window.currentSiswaList = () => currentSiswaList;
-                        // Simpan salinan ke offline cache sebagai perlindungan
                         localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(currentSiswaList));
 
-                        // Perbarui badge counter navigasi admin
+                        // Perbarui jumlah badge menu admin
                         const badgeCount = document.getElementById('navBadgeCount');
                         if (badgeCount) {
                             badgeCount.textContent = currentSiswaList.length;
@@ -1068,40 +1070,29 @@
 
                         applyFilters();
                     }, (error) => {
-                        console.error("Firestore listening error: ", error);
+                        console.error("Firestore snapshot error fallback:", error);
                         fallbackToOffline();
                     });
                 };
 
-                // Daftarkan aksi submit/hapus ke cloud
                 window.saveSiswaToCloud = async (payload) => {
                     try {
                         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'siswa', payload.nisn);
                         await setDoc(docRef, payload);
-                        
-                        showAlert('success', 'Data Tersimpan!', `Biodata siswa "${payload.nama}" berhasil disimpan ke cloud database.`);
-                        
-                        // Perbarui output JSON
-                        document.getElementById('jsonViewer').textContent = JSON.stringify(payload, null, 4);
-                        document.getElementById('resultPreview').classList.remove('hidden');
-                        document.getElementById('resultPreview').scrollIntoView({ behavior: 'smooth' });
-
-                        // Berhasil simpan, reset form agar mendapatkan NIS baru yang acak untuk pendaftar selanjutnya
+                        showAlert('success', 'Data Berhasil Disimpan!', `Biodata siswa atas nama "${payload.nama}" tersimpan aman di database cloud.`);
                         resetFormOnly();
                     } catch (error) {
-                        console.error("Firestore save error: ", error);
-                        showAlert('error', 'Gagal Sinkronisasi', 'Gagal menyimpan ke cloud: ' + error.message);
+                        showAlert('error', 'Gagal Sinkronisasi', 'Database cloud menolak penyimpanan: ' + error.message);
                     }
                 };
 
                 window.deleteSiswaFromCloud = async (nisn, nama) => {
-                    // Proteksi ganda untuk proses penghapusan data
                     if (!window.checkAdminAuthSession()) {
                         showAlert('error', 'Akses Ditolak', 'Sesi admin Anda tidak valid atau telah berakhir. Harap login ulang.');
                         return;
                     }
 
-                    showAlert('success', 'Konfirmasi Penghapusan', `Apakah Anda yakin ingin menghapus data siswa "${nama}"? Klik tindakan di bawah untuk menghapus.`);
+                    showAlert('success', 'Konfirmasi Penghapusan', `Apakah Anda yakin ingin menghapus data siswa "${nama}"? Klik tombol di bawah untuk menghapus.`);
                     
                     const alertMessageEl = document.getElementById('alertMessage');
                     const confirmBtn = document.createElement('button');
@@ -1113,7 +1104,7 @@
                             await deleteDoc(docRef);
                             showAlert('success', 'Data Dihapus', `Biodata "${nama}" telah berhasil dihapus secara permanen.`);
                         } catch (error) {
-                            showAlert('error', 'Gagal Menghapus', 'Database menolak penghapusan: ' + error.message);
+                            showAlert('error', 'Gagal Menghapus', 'Gagal menghapus dokumen cloud: ' + error.message);
                         }
                     };
                     alertMessageEl.appendChild(confirmBtn);
@@ -1122,20 +1113,20 @@
                 initDatabase();
 
             } catch (err) {
-                console.error("Inisialisasi Firebase gagal: ", err);
+                console.error("Firebase startup crash:", err);
                 fallbackToOffline();
             }
         } else {
             fallbackToOffline();
         }
 
-        // Mengatur mode penyimpanan luring/local browser jika tidak ada Firebase
+        // Penanganan Luring (Penyimpanan Mandiri di browser lokal)
         function fallbackToOffline() {
             const dbStatusEl = document.getElementById('dbStatus');
             const indicator = document.getElementById('dbIndicator');
             const badge = document.getElementById('dbBadgeText');
 
-            dbStatusEl.innerHTML = `<span class="text-amber-600 flex items-center font-medium"><i data-lucide="info" class="w-4 h-4 mr-1"></i> Aplikasi berjalan dalam Mode Offline (Data disimpan secara lokal di browser ini)</span>`;
+            dbStatusEl.innerHTML = `<span class="text-amber-600 flex items-center font-medium"><i data-lucide="info" class="w-4 h-4 mr-1"></i> Aplikasi berjalan dalam Mode Luring (Data disimpan secara lokal di browser)</span>`;
             if (indicator) {
                 indicator.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
                 badge.textContent = "LOCAL OFFLINE";
@@ -1143,7 +1134,6 @@
             }
             lucide.createIcons();
 
-            // Ambil data offline yang tersimpan di localStorage browser
             const localData = localStorage.getItem('dapodik_siswa_offline_backup');
             if (localData) {
                 try {
@@ -1153,7 +1143,6 @@
 
             window.currentSiswaList = () => offlineData;
 
-            // Perbarui badge counter navigasi admin
             const badgeCount = document.getElementById('navBadgeCount');
             if (badgeCount) {
                 badgeCount.textContent = offlineData.length;
@@ -1162,7 +1151,6 @@
 
             applyFilters();
 
-            // Override fungsi simpan ke LocalStorage saja
             window.saveSiswaToCloud = async (payload) => {
                 const index = offlineData.findIndex(s => s.nisn === payload.nisn);
                 if (index !== -1) {
@@ -1171,25 +1159,17 @@
                     offlineData.push(payload); 
                 }
                 localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(offlineData));
-                showAlert('success', 'Tersimpan Secara Lokal!', `Biodata siswa "${payload.nama}" berhasil disimpan di memori lokal browser ini.`);
+                showAlert('success', 'Tersimpan Lokal!', `Biodata siswa "${payload.nama}" berhasil disimpan di memori lokal browser ini.`);
                 
-                // Perbarui badge counter
                 if (badgeCount) {
                     badgeCount.textContent = offlineData.length;
                     badgeCount.classList.toggle('hidden', offlineData.length === 0);
                 }
 
                 applyFilters();
-
-                document.getElementById('jsonViewer').textContent = JSON.stringify(payload, null, 4);
-                document.getElementById('resultPreview').classList.remove('hidden');
-                document.getElementById('resultPreview').scrollIntoView({ behavior: 'smooth' });
-
-                // Reset form & generate NIS baru
                 resetFormOnly();
             };
 
-            // Override fungsi hapus lokal
             window.deleteSiswaFromCloud = async (nisn, nama) => {
                 if (!window.checkAdminAuthSession()) {
                     showAlert('error', 'Akses Ditolak', 'Sesi admin Anda tidak valid atau telah berakhir. Harap login ulang.');
@@ -1206,7 +1186,6 @@
                     localStorage.setItem('dapodik_siswa_offline_backup', JSON.stringify(offlineData));
                     showAlert('success', 'Data Dihapus', `Data "${nama}" telah berhasil dihapus dari browser ini.`);
                     
-                    // Perbarui badge counter
                     if (badgeCount) {
                         badgeCount.textContent = offlineData.length;
                         badgeCount.classList.toggle('hidden', offlineData.length === 0);
@@ -1217,6 +1196,56 @@
                 alertMessageEl.appendChild(confirmBtn);
             };
         }
+
+        // Prosedur Kunci Sinkronisasi Antar Perangkat
+        window.connectWithSyncKey = () => {
+            const syncKeyVal = document.getElementById('dbSyncKeyInput').value.trim();
+            if (!syncKeyVal) {
+                showAlert('error', 'Kunci Sinkronisasi Kosong', 'Silakan tempel Kunci Sinkronisasi dari perangkat Anda yang lain.');
+                return;
+            }
+            try {
+                // Decode Base64 string sinkronisasi
+                const decodedStr = decodeURIComponent(escape(atob(syncKeyVal)));
+                const syncData = JSON.parse(decodedStr);
+                
+                if (syncData.config && syncData.config.apiKey) {
+                    localStorage.setItem('custom_firebase_config', JSON.stringify(syncData.config));
+                    if (syncData.appId) {
+                        localStorage.setItem('custom_app_id', syncData.appId);
+                    }
+                    closeDbSettingsModal();
+                    showAlert('success', 'Koneksi Berhasil!', 'Perangkat ini telah sukses terintegrasi secara permanen dengan database cloud utama Anda. Halaman memuat ulang...');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error("Skema konfigurasi salah.");
+                }
+            } catch (err) {
+                showAlert('error', 'Kunci Tidak Valid', 'Gagal memproses kunci sinkronisasi. Pastikan Anda menyalin seluruh teks dengan lengkap.');
+            }
+        };
+
+        window.openDatabaseSettings = () => {
+            const currentSaved = localStorage.getItem('custom_firebase_config');
+            document.getElementById('dbConfigTextarea').value = currentSaved || "";
+            
+            try {
+                const configToEncode = currentSaved ? JSON.parse(currentSaved) : firebaseConfig;
+                if (configToEncode && configToEncode.apiKey) {
+                    const syncData = { config: configToEncode, appId: appId };
+                    const encodedKey = btoa(unescape(encodeURIComponent(JSON.stringify(syncData))));
+                    document.getElementById('dbSyncKeyOutput').value = encodedKey;
+                } else {
+                    document.getElementById('dbSyncKeyOutput').value = "Inisialisasi database aktif diperlukan.";
+                }
+            } catch (e) {
+                document.getElementById('dbSyncKeyOutput').value = "Gagal membuat kunci sinkronisasi.";
+            }
+
+            document.getElementById('dbSettingsModal').classList.remove('hidden');
+        };
     </script>
 
     <!-- UI Logic Controllers, Filters, and Administration Tools -->
@@ -1288,6 +1317,7 @@
                 navigateToPage('admin');
                 showAlert('success', 'Sesi Admin Aktif', 'Selamat datang administrator. Seluruh hak akses pengelolaan data siswa telah dibuka.');
             } else {
+                errorMsg.className = "text-rose-500 text-[10px] font-semibold mt-1 flex items-center gap-1";
                 errorMsg.classList.remove('hidden');
                 document.getElementById('adminPasswordInput').select();
             }
@@ -1494,7 +1524,7 @@
                 { cat: "II.B. DATA IBU KANDUNG", label: "Tahun Lahir Ibu", val: data.tahun_lahir_ibu },
                 { cat: "II.B. DATA IBU KANDUNG", label: "Pendidikan Terakhir Ibu", val: data.pendidikan_ibu },
                 { cat: "II.B. DATA IBU KANDUNG", label: "Pekerjaan Ibu", val: data.pekerjaan_ibu },
-                { cat: "II.B. DATA IBU KANDUNG", label: "Penghasilan Bulanan Ibu", val: data.penghasilan_ibu },
+                { cat: "II.B. DATA IBU KANDUNG", label: "Penghasilan Bulanan Ibu", val: data.penghasilan_ibu || "-" },
 
                 { cat: "III. DATA WALI", label: "Nama Wali", val: data.nama_wali || "-" },
                 { cat: "III. DATA WALI", label: "NIK Wali", val: data.nik_wali || "-" },
@@ -1836,13 +1866,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                             <div>
                                 <p class="font-bold text-slate-600 border-b pb-0.5">Ayah Kandung</p>
-                                <p>Nama: <span class="font-semibold text-slate-800">${dataSiswa.nama_ayah}</span></p>
+                                <p class="mt-1">Nama: <span class="font-semibold text-slate-800">${dataSiswa.nama_ayah}</span></p>
                                 <p>Pendidikan: ${dataSiswa.pendidikan_ayah}</p>
                                 <p>Pekerjaan: ${dataSiswa.pekerjaan_ayah}</p>
                             </div>
                             <div>
                                 <p class="font-bold text-slate-600 border-b pb-0.5">Ibu Kandung</p>
-                                <p>Nama: <span class="font-semibold text-slate-800">${dataSiswa.nama_ibu}</span></p>
+                                <p class="mt-1">Nama: <span class="font-semibold text-slate-800">${dataSiswa.nama_ibu}</span></p>
                                 <p>Pendidikan: ${dataSiswa.pendidikan_ibu}</p>
                                 <p>Pekerjaan: ${dataSiswa.pekerjaan_ibu}</p>
                             </div>
