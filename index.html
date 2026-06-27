@@ -68,7 +68,7 @@
             <div class="flex items-center space-x-3">
                 <nav class="flex bg-blue-950/60 p-1 rounded-lg border border-blue-700/30">
                     <button type="button" onclick="navigateToPage('form')" id="nav-form" class="nav-link-btn active px-4 py-2 rounded-md text-xs font-bold transition-all flex items-center gap-1.5">
-                        <i data-lucide="file-text" class="w-4 h-4"></i> Formulir Siswa
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Formulir Murid
                     </button>
                     <button type="button" onclick="navigateToPage('admin')" id="nav-admin" class="nav-link-btn px-4 py-2 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 relative">
                         <i data-lucide="shield-check" class="w-4 h-4"></i> Portal Admin
@@ -601,7 +601,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Jenis Pendaftaran <span class="text-rose-500">*</span></label>
                             <select name="jenis_pendaftaran" required onchange="toggleAsalSekolah(this.value)" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
-                                <option value="Siswa Baru">Siswa Baru</option>
+                                <option value="Siswa Baru">Siswa Baru (Kelas 7)</option>
                                 <option value="Pindahan">Pindahan (Mutasi Masuk)</option>
                                 <option value="Kembali Sekolah">Kembali Sekolah</option>
                             </select>
@@ -616,25 +616,25 @@
                         <!-- NIS (Nomor Induk Siswa Lokal) -->
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">NIS (Nomor Induk Sekolah) <span class="text-rose-500">*</span></label>
-                            <input type="text" name="nis" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Diisi oleh Panitia Sekolah">
+                            <input type="text" id="nisInput" name="nis" required readonly class="w-full px-3 py-2 border border-slate-300 bg-slate-100 text-slate-500 rounded-md focus:outline-none text-sm cursor-not-allowed" placeholder="Otomatis oleh sistem">
                         </div>
 
                         <!-- Sekolah Asal (SD / Sederajat) -->
                         <div id="asal_sekolah_box">
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Sekolah Asal (SD/MI/Sederajat) <span class="text-rose-500">*</span></label>
-                            <input type="text" id="sekolah_asal" name="sekolah_asal" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Contoh: SD Negeri 8 Loghia">
+                            <input type="text" id="sekolah_asal" name="sekolah_asal" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Contoh: SD Negeri 01 Kota IT">
                         </div>
 
                         <!-- Nomor Ijazah -->
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nomor Ijazah</label>
-                            <input type="text" name="no_ijazah" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Masukkan Nomor Ijazah SD">
+                            <input type="text" name="no_ijazah" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Masukkan Nomor Ijazah SD/MI">
                         </div>
 
                         <!-- NPSN Sekolah Asal -->
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">NPSN Sekolah Asal</label>
-                            <input type="text" name="no_peserta_ujian" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Masukkan NPSN Sekolah SD">
+                            <input type="text" name="no_peserta_ujian" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="8 Digit NPSN SD/MI">
                         </div>
 
                         <!-- Apakah Penerima KIP/KPS -->
@@ -688,11 +688,11 @@
                     </div>
                     
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
+                        <button type="button" onclick="resetFormOnly()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium text-sm rounded-lg flex items-center gap-1.5 transition-colors">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Reset Formulir
+                        </button>
                         <button type="button" onclick="printForm()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-medium text-sm rounded-lg flex items-center gap-1.5 transition-colors">
                             <i data-lucide="printer" class="w-4 h-4"></i> Cetak Formulir
-                        </button>
-                        <button type="button" onclick="exportToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg flex items-center gap-1.5 transition-colors">
-                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Unduh Excel
                         </button>
                         <button type="submit" class="px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold text-sm rounded-lg shadow flex items-center gap-1.5 transition-colors">
                             <i data-lucide="save" class="w-4 h-4"></i> Simpan
@@ -935,8 +935,8 @@
 
     <!-- Footer Web -->
     <footer class="bg-slate-800 text-slate-400 py-6 text-center text-xs border-t border-slate-700 no-print">
-        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir Peserta Didik.</p>
-        <p class="mt-1 text-slate-500">Dikembangkan by Tim Teknis SMP Swasta Teknologi.</p>
+        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir F-PD (Dapodik).</p>
+        <p class="mt-1 text-slate-500">Dikembangkan sesuai Panduan Teknis Sinkronisasi Dapodik Kementerian Pendidikan Dasar dan Menengah.</p>
     </footer>
 
     <!-- Firebase SDK Imports & App Logic -->
@@ -1237,12 +1237,14 @@
             navigateToPage('form');
         }
 
+        // Penanganan tombol Enter di input password modal
         function handleAuthKeyDown(event) {
             if (event.key === "Enter") {
                 submitAdminAuth();
             }
         }
 
+        // Validasi password admin
         function submitAdminAuth() {
             const passwordInput = document.getElementById('adminPasswordInput').value;
             const errorMsg = document.getElementById('authErrorMessage');
@@ -1485,10 +1487,10 @@
 
                 { cat: "V. REGISTRASI SEKOLAH", label: "Jenis Pendaftaran", val: data.jenis_pendaftaran },
                 { cat: "V. REGISTRASI SEKOLAH", label: "Tanggal Masuk Sekolah", val: data.tanggal_masuk },
-                { cat: "V. REGISTRASI SEKOLAH", label: "NIS (Nomor Induk Lokal)", val: data.nis },
+                { cat: "V. REGISTRASI SEKOLAH", label: "NIS", val: data.nis },
                 { cat: "V. REGISTRASI SEKOLAH", label: "Sekolah Asal (SD/MI)", val: data.sekolah_asal || "-" },
-                { cat: "V. REGISTRASI SEKOLAH", label: "Nomor Ijazah", val: data.nomor_ijazah || "-" },
-                { cat: "V. REGISTRASI SEKOLAH", label: "NPSN Sekolah Asal", val: data.npsn_sekolah_asal || "-" },
+                { cat: "V. REGISTRASI SEKOLAH", label: "Nomor Ijazah", val: data.no_ijazah || "-" },
+                { cat: "V. REGISTRASI SEKOLAH", label: "NPSN Sekolah Asal", val: data.no_peserta_ujian || "-" },
                 { cat: "V. REGISTRASI SEKOLAH", label: "Penerima KIP/KPS/KKS/PKH", val: data.penerima_bantuan || "Tidak" },
                 { cat: "V. REGISTRASI SEKOLAH", label: "No. Kartu Bantuan", val: data.no_kip || "-" }
             ];
@@ -1669,7 +1671,7 @@
                     "Pendidikan Ibu", "Pekerjaan Ibu", "Penghasilan Ibu", "Nama Wali", "Alamat Jalan", 
                     "RT", "RW", "Dusun", "Kelurahan", "Kecamatan", "Kode Pos", "Tempat Tinggal", 
                     "Moda Transportasi", "No HP / WA", "Email Aktif", "Jenis Pendaftaran", 
-                    "Tanggal Masuk", "NIS Lokal", "Sekolah Asal SD", "Nomor Ijazah", "Penerima KIP"
+                    "Tanggal Masuk", "NIS Lokal", "Sekolah Asal SD", "Nomor Ijazah", "NPSN Sekolah Asal", "Penerima KIP"
                 ]
             ];
 
@@ -1715,7 +1717,8 @@
                     siswa.tanggal_masuk,
                     siswa.nis,
                     siswa.sekolah_asal || "-",
-                    siswa.nomor_ijazah || "-",
+                    siswa.no_ijazah || "-",
+                    siswa.no_peserta_ujian || "-",
                     siswa.penerima_bantuan || "Tidak"
                 ]);
             });
@@ -1785,6 +1788,10 @@
                             <span class="col-span-2 text-slate-900 font-bold text-indigo-700">: ${dataSiswa.nis}</span>
                             <span class="text-slate-400 font-medium">Sekolah Asal</span>
                             <span class="col-span-2 text-slate-900">: ${dataSiswa.sekolah_asal || '-'}</span>
+                            <span class="text-slate-400 font-medium">Nomor Ijazah</span>
+                            <span class="col-span-2 text-slate-900 font-mono">: ${dataSiswa.no_ijazah || '-'}</span>
+                            <span class="text-slate-400 font-medium">NPSN Sekolah Asal</span>
+                            <span class="col-span-2 text-slate-900 font-mono">: ${dataSiswa.no_peserta_ujian || '-'}</span>
                             <span class="text-slate-400 font-medium">Penerima KIP</span>
                             <span class="col-span-2 text-slate-900">: ${dataSiswa.penerima_bantuan}</span>
                         </div>
