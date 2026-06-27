@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulir Identitas Murid</title>
+    <title>Formulir Dapodik Siswa - SMP Swasta Teknologi</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -107,7 +107,7 @@
                 <i data-lucide="database" class="w-4 h-4 text-blue-600"></i>
                 <span id="dbStatus">Menginisialisasi sistem basis data...</span>
             </div>
-            <span class="text-xs text-slate-500">Aplikasi Data Murid SMP Swasta Teknologi.</span>
+            <span class="text-xs text-slate-500">Aplikasi Data Peserta Didik SMP Swasta Teknologi.</span>
         </div>
     </div>
 
@@ -622,7 +622,7 @@
                         <!-- Sekolah Asal (SD / Sederajat) -->
                         <div id="asal_sekolah_box">
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Sekolah Asal (SD/MI/Sederajat) <span class="text-rose-500">*</span></label>
-                            <input type="text" id="sekolah_asal" name="sekolah_asal" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Contoh: SD Negeri 8 Loghia">
+                            <input type="text" id="sekolah_asal" name="sekolah_asal" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Contoh: SD Negeri 01 Kota IT">
                         </div>
 
                         <!-- Nomor Ijazah -->
@@ -914,13 +914,44 @@
                 </button>
             </div>
             <div class="p-6 space-y-4 text-xs">
-                <p class="text-slate-600 leading-relaxed">
-                    Jika Anda mengunduh aplikasi ini dan membukanya di HP atau perangkat lain secara mandiri, harap masukkan konfigurasi <strong>Firebase Config</strong> (JSON) Anda untuk mengaktifkan sinkronisasi real-time antar perangkat.
+                <p class="text-slate-600 leading-relaxed mb-2">
+                    Gunakan Kunci Sinkronisasi untuk mengintegrasikan data murid secara real-time dan permanen di HP, tablet, atau perangkat lainnya.
                 </p>
+                
+                <!-- 1. Kunci Sinkronisasi Perangkat Ini -->
+                <div class="space-y-1 mb-3">
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider">Kunci Sinkronisasi Perangkat Ini</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="dbSyncKeyOutput" readonly class="w-full p-2 border border-slate-300 rounded-lg font-mono text-[10px] bg-slate-50 focus:outline-none" placeholder="Membuat kunci...">
+                        <button type="button" onclick="copySyncKeyToClipboard()" class="px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center" title="Salin Kunci">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Hubungkan Perangkat Lain -->
+                <div class="space-y-1 mb-4">
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider">Hubungkan dengan Kunci Perangkat Lain</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="dbSyncKeyInput" class="w-full p-2 border border-slate-300 rounded-lg font-mono text-[10px] focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tempel kunci sinkronisasi perangkat lain...">
+                        <button type="button" onclick="connectWithSyncKey()" class="px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg flex items-center justify-center" title="Hubungkan">
+                            <i data-lucide="link" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-slate-200"></div>
+                    <span class="flex-shrink mx-4 text-slate-400 font-bold tracking-wider uppercase text-[9px]">Atau Setelan Manual</span>
+                    <div class="flex-grow border-t border-slate-200"></div>
+                </div>
+
+                <!-- 3. Manual Config -->
                 <div>
                     <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Kode Konfigurasi Firebase (JSON Object)</label>
-                    <textarea id="dbConfigTextarea" rows="6" class="w-full p-2.5 font-mono text-xxs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50" placeholder='{&#10;  "apiKey": "AIzaSy...",&#10;  "authDomain": "...",&#10;  "projectId": "...",&#10;  "storageBucket": "...",&#10;  "messagingSenderId": "...",&#10;  "appId": "..."&#10;}'></textarea>
+                    <textarea id="dbConfigTextarea" rows="4" class="w-full p-2.5 font-mono text-[10px] border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50" placeholder='{&#10;  "apiKey": "AIzaSy...",&#10;  "authDomain": "...",&#10;  "projectId": "...",&#10;  "storageBucket": "...",&#10;  "messagingSenderId": "...",&#10;  "appId": "..."&#10;}'></textarea>
                 </div>
+                
                 <div class="flex gap-2 justify-end pt-2 border-t">
                     <button type="button" onclick="clearCustomDbConfig()" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg font-semibold transition-colors">
                         Reset Bawaan
@@ -935,7 +966,7 @@
 
     <!-- Footer Web -->
     <footer class="bg-slate-800 text-slate-400 py-6 text-center text-xs border-t border-slate-700 no-print">
-        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Data Identitas Murid.</p>
+        <p>&copy; 2026 SMP Swasta Teknologi. Sistem Pengumpulan Formulir Peserta Didik.</p>
         <p class="mt-1 text-slate-500">Dikembangkan by Tim Teknis SMP Swasta Teknologi.</p>
     </footer>
 
@@ -1522,7 +1553,7 @@
             const filename = `DAPODIK_SMPST_${studentNameClean}.xlsx`;
 
             XLSX.writeFile(wb, filename);
-            showAlert('success', 'Unduhan Berhasil!', `Data atas nama "${data.nama}" telah diekspor ke Excel: ${filename}`);
+            showAlert('success', 'Unduhan Berhasil!', `Data atas nama "${data.nama}" telah expo ke Excel: ${filename}`);
         }
 
         // ==========================================
@@ -1671,7 +1702,7 @@
                     "Pendidikan Ibu", "Pekerjaan Ibu", "Penghasilan Ibu", "Nama Wali", "Alamat Jalan", 
                     "RT", "RW", "Dusun", "Kelurahan", "Kecamatan", "Kode Pos", "Tempat Tinggal", 
                     "Moda Transportasi", "No HP / WA", "Email Aktif", "Jenis Pendaftaran", 
-                    "Tanggal Masuk", "NIS Lokal", "Sekolah Asal SD", "Nomor Ijazah", "NPSN Sekolah Asal", "Penerima KIP"
+                    "Tanggal Masuk", "NIS", "Sekolah Asal SD", "Nomor Ijazah", "NPSN Sekolah Asal", "Penerima KIP"
                 ]
             ];
 
@@ -1845,6 +1876,21 @@
         function openDatabaseSettings() {
             const currentSaved = localStorage.getItem('custom_firebase_config');
             document.getElementById('dbConfigTextarea').value = currentSaved || "";
+            
+            // Generate Sync Key untuk disalin oleh pengguna
+            try {
+                const configToEncode = currentSaved ? JSON.parse(currentSaved) : firebaseConfig;
+                if (configToEncode) {
+                    const syncData = { config: configToEncode, appId: appId };
+                    const encodedKey = btoa(unescape(encodeURIComponent(JSON.stringify(syncData))));
+                    document.getElementById('dbSyncKeyOutput').value = encodedKey;
+                } else {
+                    document.getElementById('dbSyncKeyOutput').value = "Inisialisasi database aktif diperlukan.";
+                }
+            } catch (e) {
+                document.getElementById('dbSyncKeyOutput').value = "Gagal membuat kunci sinkronisasi.";
+            }
+
             document.getElementById('dbSettingsModal').classList.remove('hidden');
         }
 
@@ -1865,19 +1911,62 @@
                 showAlert('success', 'Konfigurasi Database Disimpan', 'Konfigurasi database kustom disimpan. Aplikasi akan memuat ulang halaman...');
                 setTimeout(() => {
                     window.location.reload();
-                }, 2000);
+                }, 1500);
             } catch(err) {
                 showAlert('error', 'Format JSON Tidak Valid', 'Kode yang Anda masukkan tidak sesuai standar JSON Object.');
             }
         }
 
+        // Menghubungkan perangkat lain menggunakan Kunci Sinkronisasi (Sync Key)
+        function connectWithSyncKey() {
+            const syncKeyVal = document.getElementById('dbSyncKeyInput').value.trim();
+            if (!syncKeyVal) {
+                showAlert('error', 'Kunci Kosong', 'Silakan tempel Kunci Sinkronisasi dari perangkat Anda yang lain.');
+                return;
+            }
+            try {
+                const decodedStr = decodeURIComponent(escape(atob(syncKeyVal)));
+                const syncData = JSON.parse(decodedStr);
+                
+                if (syncData.config && syncData.config.apiKey) {
+                    localStorage.setItem('custom_firebase_config', JSON.stringify(syncData.config));
+                    // Jika appId disematkan, kita simpan juga
+                    if (syncData.appId) {
+                        localStorage.setItem('custom_app_id', syncData.appId);
+                    }
+                    closeDbSettingsModal();
+                    showAlert('success', 'Sinkronisasi Berhasil!', 'Perangkat ini kini terintegrasi secara permanen dengan database cloud Anda. Memuat ulang...');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error("Skema konfigurasi salah.");
+                }
+            } catch (err) {
+                showAlert('error', 'Gagal Menghubungkan', 'Kunci Sinkronisasi tidak valid. Pastikan Anda menyalin seluruh teks dengan lengkap.');
+            }
+        }
+
+        // Salin Kunci Sinkronisasi Perangkat ke Clipboard
+        function copySyncKeyToClipboard() {
+            const keyOutput = document.getElementById('dbSyncKeyOutput');
+            keyOutput.select();
+            try {
+                document.execCommand('copy');
+                showAlert('success', 'Berhasil Disalin!', 'Kunci Sinkronisasi telah disalin. Tempel kunci ini pada menu Pengaturan DB perangkat kedua Anda.');
+            } catch (err) {
+                showAlert('error', 'Gagal Menyalin', 'Harap salin kunci secara manual.');
+            }
+        }
+
         function clearCustomDbConfig() {
             localStorage.removeItem('custom_firebase_config');
+            localStorage.removeItem('custom_app_id');
             closeDbSettingsModal();
-            showAlert('success', 'Database Reset Berhasil', 'Konfigurasi kustom dihapus. Menggunakan setelan database luring bawaan, memuat ulang halaman...');
+            showAlert('success', 'Database Reset Berhasil', 'Konfigurasi kustom dihapus. Menggunakan database bawaan host, memuat ulang...');
             setTimeout(() => {
                 window.location.reload();
-            }, 2000);
+            }, 1500);
         }
 
         function textToId(text) {
@@ -1977,6 +2066,8 @@
         window.handleAuthKeyDown = handleAuthKeyDown;
         window.logoutAdmin = logoutAdmin;
         window.generateUniqueNIS = generateUniqueNIS;
+        window.copySyncKeyToClipboard = copySyncKeyToClipboard;
+        window.connectWithSyncKey = connectWithSyncKey;
     </script>
 </body>
 </html>
