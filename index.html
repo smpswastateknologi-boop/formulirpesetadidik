@@ -736,6 +736,34 @@
                 </div>
             </div>
 
+            <!-- SETUP CONFIGURATION PANEL FOR OWN HOSTING / GITHUB PAGES -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2 mb-3">
+                    🚀 Cara Mengonlinekan Website Ini dengan Database Anda Sendiri di GitHub Pages
+                </h3>
+                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                    Saat ini website berjalan dalam mode demo/lokal karena belum ada kredensial database Firebase kustom yang diisi di dalam kode sumber. Agar Anda bisa menggunakannya secara mandiri secara online dan lintas perangkat, ikuti panduan berikut:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-600 leading-relaxed">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <p class="font-bold text-blue-800 mb-1">1. Buat Project Firebase</p>
+                        <p>Buka <a href="https://console.firebase.google.com/" target="_blank" class="text-blue-600 underline font-semibold">Firebase Console</a>, buat proyek baru dengan nama bebas (contoh: <code>smpst-ppdb</code>). Setelah proyek dibuat, tambahkan aplikasi berbasis Web (ikon <code>&lt;/&gt;</code>).</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <p class="font-bold text-blue-800 mb-1">2. Aktifkan Layanan</p>
+                        <p>Di menu sebelah kiri Firebase, aktifkan dua layanan utama:</p>
+                        <ul class="list-disc pl-4 mt-1 space-y-1">
+                            <li><strong>Authentication:</strong> Aktifkan metode login <code>Anonymous</code> (Anonim).</li>
+                            <li><strong>Cloud Firestore:</strong> Buat database dalam <code>Test Mode</code> (Mode Pengujian).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <p class="font-bold text-blue-800 mb-1">3. Salin & Tempel Config</p>
+                        <p>Salin objek <code>firebaseConfig</code> yang diberikan oleh Firebase. Buka file <code>index.html</code> ini menggunakan aplikasi Notepad/VS Code, cari tulisan <code class="font-semibold text-rose-600">FAKEDEMOCONFIG_SMPST</code> pada baris script di bawah, lalu ganti dengan konfigurasi milik Anda.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- TABEL DATA & FILTER -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <!-- Filter Area -->
@@ -892,10 +920,28 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration Parsing & Security Setup
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // =========================================================================
+        // KARTU CONFIG FIREBASE - GANTI BLOK DI BAWAH INI JIKA MAU DEPLOY DI GITHUB
+        // =========================================================================
+        const FAKEDEMOCONFIG_SMPST = {
+            apiKey: "AIzaSyFakeKeyForDemoPurposesOnly_SMPST",
+            authDomain: "smp-swasta-teknologi.firebaseapp.com",
+            projectId: "smp-swasta-teknologi",
+            storageBucket: "smp-swasta-teknologi.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef123456"
+        };
+        // =========================================================================
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'smpst-ppdb-app';
+        
+        // Membaca config otomatis dari sandbox, atau membaca fallback milik user
+        let firebaseConfig;
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            firebaseConfig = FAKEDEMOCONFIG_SMPST;
+        }
 
         // State Global Aplikasi
         let db, auth;
@@ -914,8 +960,8 @@
                 db = getFirestore(app);
 
                 // Autentikasi dengan prioritas token kustom, fallback ke anonim
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
@@ -996,9 +1042,9 @@
             } else {
                 banner.className = "bg-rose-600 text-white text-[11px] font-bold py-1 px-4 text-center transition-all duration-300";
                 if (errorCode === "offline-error") {
-                    banner.innerHTML = "🔴 Gagal menghubungi Server PPDB. Periksa koneksi internet Anda atau konfigrasi cloud.";
+                    banner.innerHTML = "🔴 Gagal menghubungi Server PPDB. Periksa koneksi internet Anda atau konfigurasi cloud.";
                 } else if (errorCode === "read-error") {
-                    banner.innerHTML = "⚠️ Masalah otorisasi database. Hubungi administrator sekolah.";
+                    banner.innerHTML = "⚠️ Masalah otorisasi database. Pastikan Security Rules Firestore Anda sudah diaktifkan di Firebase Console.";
                 } else {
                     banner.innerHTML = "🔴 Koneksi terputus. Menghubungkan kembali ke server cloud...";
                 }
