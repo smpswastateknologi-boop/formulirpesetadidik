@@ -50,11 +50,6 @@
         </div>
     </header>
 
-    <!-- STATUS SINKRONISASI CLOUD -->
-    <div id="cloud-status-banner" class="bg-amber-500 text-white text-[11px] font-bold py-1 px-4 text-center transition-all duration-300">
-        ⌛ Menghubungkan ke Cloud Database... Data belum sinkron lintas perangkat.
-    </div>
-
     <!-- CONTENT WRAPPER -->
     <main class="flex-1">
 
@@ -112,7 +107,7 @@
                         </div>
                         <div>
                           <h3 class="font-bold text-slate-900">Proses Cepat & Transparan</h3>
-                          <p class="text-sm text-slate-500 mt-1">Data pendaftaran langsung tersimpan di Cloud Database, sehingga bisa diakses dari perangkat mana saja secara instan.</p>
+                          <p class="text-sm text-slate-500 mt-1">Data pendaftaran langsung terekam pada basis data lokal dan dapat langsung dikelola panitia sekolah.</p>
                         </div>
                     </div>
                 </div>
@@ -174,7 +169,7 @@
                 <div>
                     <p class="font-bold uppercase">PENTING - VALIDITAS DATA:</p>
                     <p class="mt-0.5 leading-relaxed">
-                        Data yang dimasukkan wajib sinkron dengan Akta Kelahiran dan Kartu Keluarga terbaru. Segala kesalahan ketik pada NIK atau NISN berisiko menghambat proses validasi NISN aktif siswa di Pusdatin Kemendidbudristek.
+                        Data yang dimasukkan wajib sinkron dengan Akta Kelahiran dan Kartu Keluarga terbaru. Segala kesalahan ketik pada NIK atau NISN berisiko menghambat proses validasi NISN aktif siswa di Pusdatin Kemendikbudristek.
                     </p>
                 </div>
             </div>
@@ -605,8 +600,8 @@
 
                 <!-- SUBMIT BUTTON -->
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="cancelRegistration()" class="px-5 py-2.5 text-sm font-semibold border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-100 transition">
-                        Batal
+                    <button type="button" onclick="resetForm()" class="px-5 py-2.5 text-sm font-semibold border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-100 transition">
+                        Reset Form
                     </button>
                     <button type="submit" class="px-6 py-2.5 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-md hover:shadow-emerald-600/10 transition">
                         Kirim Pendaftaran
@@ -723,50 +718,15 @@
                 </div>
 
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
-                    <div class="bg-emerald-100 p-3 rounded-lg text-emerald-700">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <div class="bg-amber-100 p-3 rounded-lg text-amber-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     </div>
                     <div>
                         <p class="text-xs font-medium text-slate-400">Status Penyimpanan</p>
-                        <h3 class="text-xs font-bold text-emerald-700 mt-1 flex items-center gap-1" id="db-status-text">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
-                            Cloud Active (Multi-Device)
+                        <h3 class="text-xs font-bold text-slate-800 mt-1 flex items-center gap-1">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                            Database Lokal Permanen
                         </h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SETUP CONFIGURATION PANEL FOR OWN HOSTING / GITHUB PAGES -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
-                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2 mb-3">
-                    🚀 Cara Mengonlinekan Website Ini dengan Database Anda Sendiri di GitHub Pages
-                </h3>
-                <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                    Saat ini website berjalan dalam mode demo/lokal karena belum ada kredensial database Firebase kustom yang diisi di dalam kode sumber. Agar Anda bisa menggunakannya secara mandiri secara online dan lintas perangkat, ikuti panduan berikut:
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-600 leading-relaxed">
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <p class="font-bold text-blue-800 mb-1">1. Buat Project Firebase</p>
-                        <p>Buka <a href="https://console.firebase.google.com/" target="_blank" class="text-blue-600 underline font-semibold">Firebase Console</a>, buat proyek baru dengan nama bebas (contoh: <code>smpst-ppdb</code>). Setelah proyek dibuat, tambahkan aplikasi berbasis Web (ikon <code>&lt;/&gt;</code>).</p>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <p class="font-bold text-blue-800 mb-1">2. Aktifkan Layanan</p>
-                        <p>Di menu sebelah kiri Firebase, aktifkan dua layanan utama:</p>
-                        <ul class="list-disc pl-4 mt-1 space-y-1">
-                            <li><strong>Authentication:</strong> Aktifkan metode login <code>Anonymous</code> (Anonim).</li>
-                            <li><strong>Cloud Firestore:</strong> Buat database dalam <code>Test Mode</code> (Mode Pengujian).</li>
-                        </ul>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <p class="font-bold text-blue-800 mb-1">3. Salin & Tempel Config</p>
-                        <p>Salin objek <code>firebaseConfig</code> yang diberikan oleh Firebase. Buka file <code>index.html</code> ini menggunakan aplikasi Notepad/VS Code, cari tulisan <code class="font-semibold text-rose-600">const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "...",
-  projectId: "...",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "..."
-};</code> pada baris script di bawah, lalu ganti dengan konfigurasi milik Anda.</p>
                     </div>
                 </div>
             </div>
@@ -819,6 +779,15 @@
 
     </main>
 
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-center text-xs mt-12">
+        <div class="container mx-auto px-4">
+            <p class="font-bold text-slate-300">SMP SWASTA TEKNOLOGI</p>
+            <p class="mt-1">NPSN: 69952421 • Terintegrasi dengan Sistem Data Pokok Pendidikan (Dapodik)</p>
+            <p class="mt-4 text-[10px] text-slate-500">© 2026 PPDB Online SMP Swasta Teknologi. All rights reserved.</p>
+        </div>
+    </footer>
+
     <!-- ================= MODAL 1: REGISTRASI SUKSES ================= -->
     <div id="success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden animate-fade-in">
         <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full overflow-hidden p-6 text-center space-y-4">
@@ -827,8 +796,8 @@
             </div>
             
             <div>
-                <h3 class="text-xl font-bold text-slate-900">Pendaftaran Berhasil Terkirim ke Cloud!</h3>
-                <p class="text-xs text-slate-500 mt-1">Data Anda telah aman tersimpan secara permanen lintas perangkat.</p>
+                <h3 class="text-xl font-bold text-slate-900">Pendaftaran Berhasil Dikirim!</h3>
+                <p class="text-xs text-slate-500 mt-1">Data Anda telah masuk dalam database pendaftaran SMP Swasta Teknologi.</p>
             </div>
 
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-center">
@@ -895,7 +864,7 @@
             </div>
             <div>
                 <h3 class="text-lg font-bold text-slate-900">Hapus Data Pendaftaran?</h3>
-                <p class="text-xs text-slate-500 mt-1">Tindakan ini akan menghapus data murid secara permanen dari Cloud Database.</p>
+                <p class="text-xs text-slate-500 mt-1">Tindakan ini tidak dapat dibatalkan. Data murid akan dihapus permanen dari memori.</p>
             </div>
             <div class="flex gap-2 pt-2">
                 <button id="btn-confirm-delete" class="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition">Hapus</button>
@@ -904,92 +873,113 @@
         </div>
     </div>
 
-    <!-- ================= MODAL 4: KONFIRMASI PEMBATALAN ================= -->
-    <div id="cancel-confirm-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-sm w-full p-6 text-center space-y-4">
-            <div class="bg-amber-100 text-amber-700 w-16 h-16 rounded-full inline-flex items-center justify-center mx-auto">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            </div>
-            <div>
-                <h3 class="text-lg font-bold text-slate-900">Batalkan Pengisian?</h3>
-                <p class="text-xs text-slate-500 mt-1">Seluruh data yang telah Anda isikan di form ini akan terhapus dan tidak disimpan.</p>
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="executeCancellation()" class="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-lg transition">Ya, Batalkan</button>
-                <button onclick="closeCancelConfirmModal()" class="flex-1 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg transition">Lanjutkan Mengisi</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= JAVASCRIPT LOGIC (MODULE INTEGRATION WITH FIREBASE) ================= -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // =========================================================================
-        // KARTU CONFIG FIREBASE - GANTI BLOK DI BAWAH INI JIKA MAU DEPLOY DI GITHUB
-        // =========================================================================
-        const FAKEDEMOCONFIG_SMPST = {
-            apiKey: "AIzaSyFakeKeyForDemoPurposesOnly_SMPST",
-            authDomain: "smp-swasta-teknologi.firebaseapp.com",
-            projectId: "smp-swasta-teknologi",
-            storageBucket: "smp-swasta-teknologi.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
-        };
-        // =========================================================================
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'smpst-ppdb-app';
-        
-        // Membaca config otomatis dari sandbox, atau membaca fallback milik user
-        let firebaseConfig;
-        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-            firebaseConfig = JSON.parse(__firebase_config);
-        } else {
-            firebaseConfig = FAKEDEMOCONFIG_SMPST;
-        }
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // Data Mock Awal untuk Database Siswa (Simulasi)
+        const INITIAL_STUDENTS_DATA = [
+            {
+                id: "REG-2026-001",
+                tanggalDaftar: "2026-06-15",
+                namaLengkap: "Rian Hidayat",
+                jenisKelamin: "Laki-laki",
+                nisn: "0098765432",
+                nik: "3273012345670001",
+                tempatLahir: "Bandung",
+                tanggalLahir: "2013-04-12",
+                agama: "Islam",
+                kebutuhanKhusus: "Tidak Ada",
+                sekolahAsal: "SDN 10 Arcamanik",
+                noIjazah: "DN-02/D-SD/13/0123456",
+                alamatJalan: "Jl. Teknologi Raya No. 42",
+                rt: "04",
+                rw: "12",
+                dusun: "Mekar Jaya",
+                kelurahan: "Cisaranten",
+                kecamatan: "Arcamanik",
+                kodePos: "40293",
+                tempatTinggal: "Bersama Orang Tua",
+                transportasi: "Jalan Kaki",
+                namaAyah: "Asep Hidayat",
+                nikAyah: "3273010101700003",
+                tahunLahirAyah: "1975",
+                pendidikanAyah: "S1/Sederajat",
+                pekerjaanAyah: "Karyawan Swasta",
+                penghasilanAyah: "Rp 5.000.000 - Rp 9.999.999",
+                namaIbu: "Siti Aminah",
+                nikIbu: "3273010202750004",
+                tahunLahirIbu: "1978",
+                pendidikanIbu: "SMA/Sederajat",
+                pekerjaanIbu: "Ibu Rumah Tangga",
+                penghasilanIbu: "Tidak Berpenghasilan",
+                noHp: "081234567890",
+                email: "rian.hidayat@email.com",
+                tinggiBadan: "155",
+                beratBadan: "45",
+                jarakSekolah: "Kurang dari 1 KM",
+                waktuTempuh: "10",
+                jumlahSaudara: "2"
+            },
+            {
+                id: "REG-2026-002",
+                tanggalDaftar: "2026-06-20",
+                namaLengkap: "Sarah Amelia",
+                jenisKelamin: "Perempuan",
+                nisn: "0102345678",
+                nik: "3273024808130002",
+                tempatLahir: "Jakarta",
+                tanggalLahir: "2013-08-08",
+                agama: "Kristen",
+                kebutuhanKhusus: "Tidak Ada",
+                sekolahAsal: "SD Swasta IT Jakarta",
+                noIjazah: "DN-02/D-SD/13/0789012",
+                alamatJalan: "Komp. Permata Hijau Blok C3",
+                rt: "01",
+                rw: "05",
+                dusun: "Permata",
+                kelurahan: "Sukamaju",
+                kecamatan: "Cibeunying",
+                kodePos: "40124",
+                tempatTinggal: "Bersama Orang Tua",
+                transportasi: "Antar Jemput / Mobil",
+                namaAyah: "Budi Santoso",
+                nikAyah: "3171020305710001",
+                tahunLahirAyah: "1972",
+                pendidikanAyah: "S2/Sederajat",
+                pekerjaanAyah: "Wiraswasta",
+                penghasilanAyah: "Lebih dari Rp 20.000.000",
+                namaIbu: "Diana Putri",
+                nikIbu: "3171050508740003",
+                tahunLahirIbu: "1976",
+                pendidikanIbu: "S1/Sederajat",
+                pekerjaanIbu: "PNS",
+                penghasilanIbu: "Rp 5.000.000 - Rp 9.999.999",
+                noHp: "089876543210",
+                email: "sarah.amelia@email.com",
+                tinggiBadan: "150",
+                beratBadan: "40",
+                jarakSekolah: "Lebih dari 1 KM",
+                waktuTempuh: "25",
+                jumlahSaudara: "1"
+            }
+        ];
 
         // State Global Aplikasi
-        let db, auth;
-        let user = null;
         let students = [];
         let currentPage = 'home';
         let isAdminLoggedIn = false;
         let studentToDeleteId = null;
 
-        // Inisialisasi Firebase & Autentikasi sesuai Aturan 3 (Auth Sebelum Query)
-        async function initApp() {
-            try {
-                // Inisialisasi Firebase App, Auth, dan Firestore
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Autentikasi dengan prioritas token kustom, fallback ke anonim
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // Pantau perubahan status autentikasi
-                onAuthStateChanged(auth, (currentUser) => {
-                    user = currentUser;
-                    if (currentUser) {
-                        // Jalankan koneksi real-time listeners setelah terautentikasi
-                        subscribeToStudentsCloud();
-                    } else {
-                        updateCloudStatus(false);
-                    }
-                });
-
-            } catch (error) {
-                console.error("Gagal menginisialisasi Cloud Database: ", error);
-                updateCloudStatus(false, "offline-error");
+        // Inisialisasi Database (Load data dari localStorage, fallback ke Mock Data jika kosong)
+        function initApp() {
+            const savedStudents = localStorage.getItem('dapodik_students');
+            if (savedStudents) {
+                students = JSON.parse(savedStudents);
+            } else {
+                students = [...INITIAL_STUDENTS_DATA];
+                localStorage.setItem('dapodik_students', JSON.stringify(students));
             }
-
-            // Atur status login admin dari session
+            
+            // Cek status login admin yang disimpan
             const sessionLogin = localStorage.getItem('admin_logged_in');
             if (sessionLogin === 'true') {
                 isAdminLoggedIn = true;
@@ -998,7 +988,7 @@
             updateHeaderActions();
             navigateTo('home');
 
-            // Dropdown Click-Out handler
+            // Tambahkan event listener untuk menutup dropdown unduh ketika diklik di luar area dropdown
             document.addEventListener('click', function(e) {
                 const container = document.getElementById('download-dropdown-container');
                 const menu = document.getElementById('download-dropdown-menu');
@@ -1008,75 +998,23 @@
             });
         }
 
-        // Jalankan sinkronisasi real-time listener dari Firestore (Aturan 1: Path Ketat & Aturan 2: No Complex Queries)
-        function subscribeToStudentsCloud() {
-            if (!user) return; // Guard Auth
-
-            // Path ketat sesuai Rule 1 (Public Data)
-            const studentsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-
-            // Menggunakan query collection sederhana tanpa orderBy/where yang butuh indeks (Rule 2)
-            onSnapshot(studentsCollectionRef, (snapshot) => {
-                students = [];
-                snapshot.forEach((doc) => {
-                    students.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Lakukan pengurutan / sortir secara manual di memori JS (Rule 2) untuk menghindari error index
-                students.sort((a, b) => b.id.localeCompare(a.id));
-
-                updateStatistics();
-                renderStudentsTable();
-                updateCloudStatus(true);
-            }, (error) => {
-                console.error("Firestore real-time subscription error: ", error);
-                updateCloudStatus(false, "read-error");
-            });
-        }
-
-        // Perbarui spanduk status koneksi cloud database di bagian atas halaman
-        function updateCloudStatus(isConnected, errorCode = "") {
-            const banner = document.getElementById('cloud-status-banner');
-            const statusText = document.getElementById('db-status-text');
-
-            if (isConnected) {
-                banner.className = "bg-emerald-600 text-white text-[11px] font-bold py-1 px-4 text-center transition-all duration-300";
-                banner.innerHTML = "🟢 Terkoneksi ke Cloud Database SMPST. Data tersimpan permanen lintas perangkat.";
-                if (statusText) {
-                    statusText.className = "text-xs font-bold text-emerald-700 mt-1 flex items-center gap-1";
-                    statusText.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-ping"></span> Cloud Active (Multi-Device)`;
-                }
-            } else {
-                banner.className = "bg-rose-600 text-white text-[11px] font-bold py-1 px-4 text-center transition-all duration-300";
-                if (errorCode === "offline-error") {
-                    banner.innerHTML = "🔴 Gagal menghubungi Server PPDB. Periksa koneksi internet Anda atau konfigurasi cloud.";
-                } else if (errorCode === "read-error") {
-                    banner.innerHTML = "⚠️ Masalah otorisasi database. Pastikan Security Rules Firestore Anda sudah diaktifkan di Firebase Console.";
-                } else {
-                    banner.innerHTML = "🔴 Koneksi terputus. Menghubungkan kembali ke server cloud...";
-                }
-                
-                if (statusText) {
-                    statusText.className = "text-xs font-bold text-rose-700 mt-1 flex items-center gap-1";
-                    statusText.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> Cloud Offline`;
-                }
-            }
-        }
-
-        // Navigasi Halaman
+        // Navigasi Antar Halaman (Views)
         function navigateTo(pageId) {
             currentPage = pageId;
 
+            // Sembunyikan semua seksi halaman
             document.querySelectorAll('.view-section').forEach(section => {
                 section.classList.add('hidden');
             });
 
+            // Tunjukkan halaman aktif
             const activePage = document.getElementById(`page-${pageId}`);
             if (activePage) {
                 activePage.classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
+            // Aksi khusus saat masuk dashboard admin
             if (pageId === 'admin-dashboard') {
                 if (!isAdminLoggedIn) {
                     navigateTo('admin-login');
@@ -1089,11 +1027,12 @@
             updateHeaderActions();
         }
 
-        // Render tombol navigasi header dinamis
+        // Memperbarui tombol & indikator pada Header sesuai state pendaftaran / login
         function updateHeaderActions() {
             const container = document.getElementById('header-nav-actions');
             let html = '';
 
+            // Jika tidak di home, beri opsi tombol Kembali ke Home
             if (currentPage !== 'home') {
                 html += `
                     <button onclick="navigateTo('home')" class="px-3 py-1.5 text-xs font-semibold bg-white/10 hover:bg-white/20 rounded-md transition">
@@ -1129,49 +1068,37 @@
             container.innerHTML = html;
         }
 
-        // Tampilkan Modal Konfirmasi Pembatalan Registrasi (Tanpa Browser Confirm)
+        // Membatalkan pendaftaran
         function cancelRegistration() {
-            document.getElementById('cancel-confirm-modal').classList.remove('hidden');
+            if (confirm('Apakah Anda yakin ingin membatalkan pengisian? Seluruh isian form Anda akan terhapus.')) {
+                resetForm();
+                navigateTo('home');
+            }
         }
 
-        function closeCancelConfirmModal() {
-            document.getElementById('cancel-confirm-modal').classList.add('hidden');
-        }
-
-        function executeCancellation() {
-            closeCancelConfirmModal();
-            resetForm();
-            navigateTo('home');
-        }
-
-        // Filter Karakter angka saja
+        // Filter karakter non-angka pada input tertentu
         function cleanNumberInput(input) {
             input.value = input.value.replace(/[^0-9]/g, '');
         }
 
-        // Toggle Bagian Formulir Wali
+        // Switch Visibilitas Kolom Data Wali
         function toggleWaliSection() {
             const selectWali = document.getElementById('mempunyaiWali').value;
             const fields = document.getElementById('wali-fields');
             const formNamaWali = document.getElementById('form-namaWali');
 
-            if (fields) {
-                if (selectWali === 'Ya') {
-                    fields.classList.remove('hidden');
-                    if (formNamaWali) formNamaWali.setAttribute('required', 'true');
-                } else {
-                    fields.classList.add('hidden');
-                    if (formNamaWali) {
-                        formNamaWali.removeAttribute('required');
-                        formNamaWali.value = '';
-                    }
-                    const nW = document.getElementById('form-nikWali');
-                    if (nW) nW.value = '';
-                }
+            if (selectWali === 'Ya') {
+                fields.classList.remove('hidden');
+                formNamaWali.setAttribute('required', 'true');
+            } else {
+                fields.classList.add('hidden');
+                formNamaWali.removeAttribute('required');
+                formNamaWali.value = '';
+                document.getElementById('form-nikWali').value = '';
             }
         }
 
-        // Reset Formulir
+        // RESET SELURUH FORM INPUTAN
         function resetForm() {
             document.getElementById('dapodik-form').reset();
             document.querySelectorAll('[id^="err-"]').forEach(errSpan => {
@@ -1182,15 +1109,11 @@
             toggleWaliSection();
         }
 
-        // Kirim Form dan Simpan Lintas Perangkat ke Firestore (Rule 1 & Rule 3)
-        async function submitForm(event) {
+        // PROSES SUBMIT & VALIDASI FORM PENDAFTARAN
+        function submitForm(event) {
             event.preventDefault();
 
-            if (!user) {
-                alert("Koneksi aman ke server belum terjalin. Mohon tunggu beberapa detik lalu coba lagi.");
-                return;
-            }
-
+            // Ambil semua elemen error
             document.querySelectorAll('[id^="err-"]').forEach(errSpan => {
                 errSpan.classList.add('hidden');
                 errSpan.textContent = '';
@@ -1200,18 +1123,25 @@
             const data = Object.fromEntries(fd.entries());
             let hasError = false;
 
+            // Validasi NISN (10 Digit)
             if (data.nisn.length !== 10) {
                 showInputError('nisn', 'NISN harus tepat berjumlah 10 digit angka!');
                 hasError = true;
             }
+
+            // Validasi NIK Siswa (16 Digit)
             if (data.nik.length !== 16) {
                 showInputError('nik', 'NIK Siswa harus tepat berjumlah 16 digit angka!');
                 hasError = true;
             }
+
+            // Validasi Sekolah Asal (Wajib diisi)
             if (!data.sekolahAsal || !data.sekolahAsal.trim()) {
                 showInputError('sekolahAsal', 'Sekolah Asal wajib diisi!');
                 hasError = true;
             }
+
+            // Validasi NIK Ayah & Ibu (jika diisi)
             if (data.nikAyah && data.nikAyah.length !== 16) {
                 showInputError('nikAyah', 'NIK Ayah harus tepat berjumlah 16 digit angka!');
                 hasError = true;
@@ -1220,12 +1150,15 @@
                 showInputError('nikIbu', 'NIK Ibu harus tepat berjumlah 16 digit angka!');
                 hasError = true;
             }
+
+            // Validasi Wali jika opsi menggunakan wali dipilih
             if (data.mempunyaiWali === 'Ya' && !data.namaWali.trim()) {
                 showInputError('namaWali', 'Nama Lengkap Wali wajib diisi!');
                 hasError = true;
             }
 
             if (hasError) {
+                // Scroll ke elemen error pertama
                 const firstErr = document.querySelector('.border-red-500');
                 if (firstErr) {
                     firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1233,31 +1166,29 @@
                 return;
             }
 
-            // Bangun ID Registrasi
+            // Menghasilkan No Registrasi Unik
             const currentYear = new Date().getFullYear();
             const sequenceNumber = String(students.length + 1).padStart(3, '0');
             const registrationId = `REG-${currentYear}-${sequenceNumber}`;
 
+            // Susun Objek Data Siswa Baru
             const newStudent = {
+                id: registrationId,
                 tanggalDaftar: new Date().toISOString().split('T')[0],
                 ...data
             };
 
-            try {
-                // Simpan secara permanen ke cloud database di path ketat (Aturan 1)
-                const studentDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', registrationId);
-                await setDoc(studentDocRef, newStudent);
+            // Masukkan data siswa baru ke array depan
+            students.unshift(newStudent);
+            // Simpan secara permanen ke localStorage
+            localStorage.setItem('dapodik_students', JSON.stringify(students));
 
-                // Tunjukkan Modal Sukses
-                document.getElementById('registered-id-display').textContent = registrationId;
-                document.getElementById('success-modal').classList.remove('hidden');
-            } catch (e) {
-                console.error("Gagal menyimpan data ke cloud server: ", e);
-                alert("Terjadi kesalahan sistem saat menyimpan data ke server cloud. Mohon periksa kembali koneksi internet Anda.");
-            }
+            // Tampilkan Modal Pendaftaran Berhasil
+            document.getElementById('registered-id-display').textContent = registrationId;
+            document.getElementById('success-modal').classList.remove('hidden');
         }
 
-        // Tampilkan tanda error masukan
+        // Helper Tampilkan Gaya Error pada input
         function showInputError(fieldName, errorMessage) {
             const errSpan = document.getElementById(`err-${fieldName}`);
             const inputElement = document.getElementById(`form-${fieldName}`);
@@ -1267,6 +1198,7 @@
             }
             if (inputElement) {
                 inputElement.classList.add('border-red-500', 'bg-red-50');
+                // Hapus efek error begitu user fokus/mengetik kembali
                 inputElement.addEventListener('input', function cleanErr() {
                     inputElement.classList.remove('border-red-500', 'bg-red-50');
                     if (errSpan) errSpan.classList.add('hidden');
@@ -1275,14 +1207,14 @@
             }
         }
 
-        // Tutup Modal Sukses
+        // Tutup Modal Sukses & Arahkan Kembali
         function closeSuccessModal() {
             document.getElementById('success-modal').classList.add('hidden');
             resetForm();
             navigateTo('home');
         }
 
-        // Operator Login
+        // LOGIKA LOGIN ADMIN
         function handleLogin(event) {
             event.preventDefault();
             const userVal = document.getElementById('admin-username').value;
@@ -1292,19 +1224,17 @@
             if (userVal === 'admin' && passVal === 'dapodik2026') {
                 isAdminLoggedIn = true;
                 localStorage.setItem('admin_logged_in', 'true');
-                if (errBox) errBox.classList.add('hidden');
+                errBox.classList.add('hidden');
                 document.getElementById('admin-username').value = '';
                 document.getElementById('admin-password').value = '';
                 navigateTo('admin-dashboard');
             } else {
-                if (errBox) {
-                    errBox.textContent = 'Kombinasi Username / Password Operator Salah! Silakan coba kembali.';
-                    errBox.classList.remove('hidden');
-                }
+                errBox.textContent = 'Kombinasi Username / Password Operator Salah! Silakan coba lagi.';
+                errBox.classList.remove('hidden');
             }
         }
 
-        // Operator Logout
+        // LOGIKA LOGOUT ADMIN
         function handleLogout() {
             isAdminLoggedIn = false;
             localStorage.removeItem('admin_logged_in');
@@ -1312,36 +1242,31 @@
             navigateTo('home');
         }
 
-        // Perbarui Statistik PPDB
+        // UPDATE DATA STATISTIK PADA DASHBOARD ADMIN
         function updateStatistics() {
             const total = students.length;
             const males = students.filter(s => s.jenisKelamin === 'Laki-laki').length;
             const females = students.filter(s => s.jenisKelamin === 'Perempuan').length;
 
-            const t = document.getElementById('stat-total');
-            const m = document.getElementById('stat-male');
-            const f = document.getElementById('stat-female');
-
-            if (t) t.textContent = `${total} Siswa`;
-            if (m) m.textContent = `${males} Siswa`;
-            if (f) f.textContent = `${females} Siswa`;
+            document.getElementById('stat-total').textContent = `${total} Siswa`;
+            document.getElementById('stat-male').textContent = `${males} Siswa`;
+            document.getElementById('stat-female').textContent = `${females} Siswa`;
         }
 
-        // Render data siswa ke dalam tabel dashboard operator admin
+        // RENDER DATA SISWA KE TABEL ADMIN (MENDUKUNG SEARCH & FILTER)
         function renderStudentsTable() {
             const searchVal = document.getElementById('admin-search').value.toLowerCase();
             const filterGender = document.getElementById('admin-filter-gender').value;
             const tbody = document.getElementById('students-table-body');
             
-            if (!tbody) return;
             tbody.innerHTML = '';
 
             const filtered = students.filter(student => {
                 const matchSearch = 
-                    (student.namaLengkap && student.namaLengkap.toLowerCase().includes(searchVal)) ||
-                    (student.nisn && student.nisn.includes(searchVal)) ||
-                    (student.id && student.id.toLowerCase().includes(searchVal)) ||
-                    (student.nik && student.nik.includes(searchVal));
+                    student.namaLengkap.toLowerCase().includes(searchVal) ||
+                    student.nisn.includes(searchVal) ||
+                    student.id.toLowerCase().includes(searchVal) ||
+                    student.nik.includes(searchVal);
                 
                 const matchGender = filterGender === 'Semua' || student.jenisKelamin === filterGender;
 
@@ -1354,15 +1279,15 @@
                     tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
                     tr.innerHTML = `
                         <td class="p-4 font-bold text-blue-700 font-mono">${student.id}</td>
-                        <td class="p-4 font-semibold text-slate-900">${student.namaLengkap || '-'}</td>
-                        <td class="p-4 font-mono">${student.nisn || '-'}</td>
+                        <td class="p-4 font-semibold text-slate-900">${student.namaLengkap}</td>
+                        <td class="p-4 font-mono">${student.nisn}</td>
                         <td class="p-4">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold ${student.jenisKelamin === 'Laki-laki' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}">
-                                ${student.jenisKelamin || '-'}
+                                ${student.jenisKelamin}
                             </span>
                         </td>
-                        <td class="p-4 text-slate-600">${student.kecamatan || '-'}</td>
-                        <td class="p-4 text-slate-600 font-mono">${student.noHp || '-'}</td>
+                        <td class="p-4 text-slate-600">${student.kecamatan}</td>
+                        <td class="p-4 text-slate-600 font-mono">${student.noHp}</td>
                         <td class="p-4 flex justify-center items-center gap-1.5">
                             <button onclick="showStudentDetail('${student.id}')" class="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md transition" title="Lihat Detail Dapodik">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -1398,14 +1323,14 @@
                 <div class="space-y-3">
                     <h4 class="font-bold text-blue-800 border-b pb-1">I. DATA PRIBADI SISWA</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Nama Lengkap</span> <span class="w-2/3 font-bold text-slate-800">: ${student.namaLengkap || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">NISN</span> <span class="w-2/3 font-mono font-bold text-slate-800">: ${student.nisn || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">NIK</span> <span class="w-2/3 font-mono text-slate-800">: ${student.nik || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Jenis Kelamin</span> <span class="w-2/3 text-slate-800">: ${student.jenisKelamin || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tempat Lahir</span> <span class="w-2/3 text-slate-800">: ${student.tempatLahir || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tanggal Lahir</span> <span class="w-2/3 text-slate-800">: ${student.tanggalLahir || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Agama</span> <span class="w-2/3 text-slate-800">: ${student.agama || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Kebutuhan Khusus</span> <span class="w-2/3 text-slate-800">: ${student.kebutuhanKhusus || '-'}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Nama Lengkap</span> <span class="w-2/3 font-bold text-slate-800">: ${student.namaLengkap}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">NISN</span> <span class="w-2/3 font-mono font-bold text-slate-800">: ${student.nisn}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">NIK</span> <span class="w-2/3 font-mono text-slate-800">: ${student.nik}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Jenis Kelamin</span> <span class="w-2/3 text-slate-800">: ${student.jenisKelamin}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tempat Lahir</span> <span class="w-2/3 text-slate-800">: ${student.tempatLahir}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tanggal Lahir</span> <span class="w-2/3 text-slate-800">: ${student.tanggalLahir}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Agama</span> <span class="w-2/3 text-slate-800">: ${student.agama}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Kebutuhan Khusus</span> <span class="w-2/3 text-slate-800">: ${student.kebutuhanKhusus}</span></div>
                         <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Sekolah Asal</span> <span class="w-2/3 font-bold text-slate-800">: ${student.sekolahAsal || '-'}</span></div>
                         <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">No. Seri Ijazah</span> <span class="w-2/3 font-mono text-slate-800">: ${student.noIjazah || '-'}</span></div>
                     </div>
@@ -1415,13 +1340,13 @@
                 <div class="space-y-3">
                     <h4 class="font-bold text-blue-800 border-b pb-1">II. ALAMAT TEMPAT TINGGAL</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Alamat Jalan</span> <span class="w-2/3 text-slate-800">: ${student.alamatJalan || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">RT / RW / Dusun</span> <span class="w-2/3 text-slate-800">: RT ${student.rt || '-'} / RW ${student.rw || '-'} / ${student.dusun || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Desa/Kelurahan</span> <span class="w-2/3 text-slate-800">: ${student.kelurahan || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Kecamatan</span> <span class="w-2/3 text-slate-800">: ${student.kecamatan || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Kode Pos</span> <span class="w-2/3 text-slate-800">: ${student.kodePos || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tempat Tinggal</span> <span class="w-2/3 text-slate-800">: ${student.tempatTinggal || '-'}</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Transportasi</span> <span class="w-2/3 text-slate-800">: ${student.transportasi || '-'}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Alamat Jalan</span> <span class="w-2/3 text-slate-800">: ${student.alamatJalan}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">RT / RW / Dusun</span> <span class="w-2/3 text-slate-800">: RT ${student.rt} / RW ${student.rw} / ${student.dusun || '-'}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Desa/Kelurahan</span> <span class="w-2/3 text-slate-800">: ${student.kelurahan}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Kecamatan</span> <span class="w-2/3 text-slate-800">: ${student.kecamatan}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Kode Pos</span> <span class="w-2/3 text-slate-800">: ${student.kodePos}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tempat Tinggal</span> <span class="w-2/3 text-slate-800">: ${student.tempatTinggal}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Transportasi</span> <span class="w-2/3 text-slate-800">: ${student.transportasi}</span></div>
                     </div>
                 </div>
 
@@ -1429,30 +1354,33 @@
                 <div class="space-y-3">
                     <h4 class="font-bold text-blue-800 border-b pb-1">III. ORANG TUA / WALI SISWA</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Ayah -->
                         <div class="space-y-1 bg-slate-50 p-2.5 rounded border">
                             <p class="font-bold text-slate-700 underline mb-1">Data Ayah:</p>
-                            <p><span class="text-slate-400">Nama:</span> ${student.namaAyah || '-'}</p>
+                            <p><span class="text-slate-400">Nama:</span> ${student.namaAyah}</p>
                             <p><span class="text-slate-400">NIK:</span> ${student.nikAyah || '-'}</p>
-                            <p><span class="text-slate-400">Pendidikan:</span> ${student.pendidikanAyah || '-'}</p>
-                            <p><span class="text-slate-400">Pekerjaan:</span> ${student.pekerjaanAyah || '-'}</p>
-                            <p><span class="text-slate-400">Penghasilan:</span> ${student.penghasilanAyah || '-'}</p>
+                            <p><span class="text-slate-400">Pendidikan:</span> ${student.pendidikanAyah}</p>
+                            <p><span class="text-slate-400">Pekerjaan:</span> ${student.pekerjaanAyah}</p>
+                            <p><span class="text-slate-400">Penghasilan:</span> ${student.penghasilanAyah}</p>
                         </div>
+                        <!-- Ibu -->
                         <div class="space-y-1 bg-slate-50 p-2.5 rounded border">
                             <p class="font-bold text-slate-700 underline mb-1">Data Ibu:</p>
-                            <p><span class="text-slate-400">Nama:</span> ${student.namaIbu || '-'}</p>
+                            <p><span class="text-slate-400">Nama:</span> ${student.namaIbu}</p>
                             <p><span class="text-slate-400">NIK:</span> ${student.nikIbu || '-'}</p>
-                            <p><span class="text-slate-400">Pendidikan:</span> ${student.pendidikanIbu || '-'}</p>
-                            <p><span class="text-slate-400">Pekerjaan:</span> ${student.pekerjaanIbu || '-'}</p>
-                            <p><span class="text-slate-400">Penghasilan:</span> ${student.penghasilanIbu || '-'}</p>
+                            <p><span class="text-slate-400">Pendidikan:</span> ${student.pendidikanIbu}</p>
+                            <p><span class="text-slate-400">Pekerjaan:</span> ${student.pekerjaanIbu}</p>
+                            <p><span class="text-slate-400">Penghasilan:</span> ${student.penghasilanIbu}</p>
                         </div>
+                        <!-- Wali -->
                         ${student.mempunyaiWali === 'Ya' ? `
                         <div class="space-y-1 bg-slate-50 p-2.5 rounded border md:col-span-2">
                             <p class="font-bold text-slate-700 underline mb-1">Data Wali:</p>
-                            <p><span class="text-slate-400">Nama:</span> ${student.namaWali || '-'}</p>
+                            <p><span class="text-slate-400">Nama:</span> ${student.namaWali}</p>
                             <p><span class="text-slate-400">NIK:</span> ${student.nikWali || '-'}</p>
-                            <p><span class="text-slate-400">Pendidikan:</span> ${student.pendidikanWali || '-'}</p>
-                            <p><span class="text-slate-400">Pekerjaan:</span> ${student.pekerjaanWali || '-'}</p>
-                            <p><span class="text-slate-400">Penghasilan:</span> ${student.penghasilanWali || '-'}</p>
+                            <p><span class="text-slate-400">Pendidikan:</span> ${student.pendidikanWali}</p>
+                            <p><span class="text-slate-400">Pekerjaan:</span> ${student.pekerjaanWali}</p>
+                            <p><span class="text-slate-400">Penghasilan:</span> ${student.penghasilanWali}</p>
                         </div>
                         ` : ''}
                     </div>
@@ -1462,12 +1390,12 @@
                 <div class="space-y-3">
                     <h4 class="font-bold text-blue-800 border-b pb-1">IV. KONTAK & DATA PERIODIK</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Nomor HP/WA</span> <span class="w-2/3 font-mono font-bold text-slate-800">: ${student.noHp || '-'}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Nomor HP/WA</span> <span class="w-2/3 font-mono font-bold text-slate-800">: ${student.noHp}</span></div>
                         <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Email</span> <span class="w-2/3 text-slate-800">: ${student.email || '-'}</span></div>
                         <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tinggi / Berat</span> <span class="w-2/3 text-slate-800">: ${student.tinggiBadan || '-'} cm / ${student.beratBadan || '-'} kg</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Jarak / Tempuh</span> <span class="w-2/3 text-slate-800">: ${student.jarakSekolah || '-'} (${student.waktuTempuh || '-'} Menit)</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Jumlah Saudara</span> <span class="w-2/3 text-slate-800">: ${student.jumlahSaudara || '0'} Saudara</span></div>
-                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tanggal Daftar</span> <span class="w-2/3 text-slate-800">: ${student.tanggalDaftar || '-'}</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Jarak / Tempuh</span> <span class="w-2/3 text-slate-800">: ${student.jarakSekolah} (${student.waktuTempuh || '-'} Menit)</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Jumlah Saudara</span> <span class="w-2/3 text-slate-800">: ${student.jumlahSaudara} Saudara</span></div>
+                        <div class="flex border-b border-slate-50 pb-1"><span class="w-1/3 text-slate-400">Tanggal Daftar</span> <span class="w-2/3 text-slate-800">: ${student.tanggalDaftar}</span></div>
                     </div>
                 </div>
             `;
@@ -1475,15 +1403,17 @@
             document.getElementById('detail-modal').classList.remove('hidden');
         }
 
+        // TUTUP MODAL DETAIL
         function closeDetailModal() {
             document.getElementById('detail-modal').classList.add('hidden');
         }
 
-        // Buka modal hapus data permanen dari Cloud
+        // KONFIRMASI PENGHAPUSAN DATA SISWA (CUSTOM CONFIRM MODAL)
         function openDeleteConfirmModal(studentId) {
             studentToDeleteId = studentId;
             document.getElementById('delete-confirm-modal').classList.remove('hidden');
             
+            // Konfigurasi trigger tombol konfirmasi hapus
             const confirmBtn = document.getElementById('btn-confirm-delete');
             confirmBtn.onclick = function() {
                 executeDeleteStudent();
@@ -1495,21 +1425,19 @@
             document.getElementById('delete-confirm-modal').classList.add('hidden');
         }
 
-        // Jalankan aksi penghapusan dokumen secara permanen dari Cloud Firestore (Aturan 1)
-        async function executeDeleteStudent() {
+        function executeDeleteStudent() {
             if (studentToDeleteId) {
-                try {
-                    const studentDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', studentToDeleteId);
-                    await deleteDoc(studentDocRef);
-                    closeDeleteConfirmModal();
-                } catch (e) {
-                    console.error("Gagal menghapus data dari Cloud: ", e);
-                    alert("Gagal menghapus data dari server. Silakan coba kembali.");
-                }
+                students = students.filter(s => s.id !== studentToDeleteId);
+                localStorage.setItem('dapodik_students', JSON.stringify(students));
+                
+                // Perbarui tampilan
+                updateStatistics();
+                renderStudentsTable();
+                closeDeleteConfirmModal();
             }
         }
 
-        // Toggle Download Menu Dropdown
+        // TOGGLE DOWNLOAD DROPDOWN MENU
         function toggleDownloadMenu() {
             const menu = document.getElementById('download-dropdown-menu');
             if (menu) {
@@ -1517,7 +1445,7 @@
             }
         }
 
-        // Rekap Unduhan format CSV / Excel
+        // UNDUH SEMUA ISIAN FORMULIR - FORMAT EXCEL / CSV (Sangat berguna untuk admin sekolah)
         function exportToCSV() {
             if (students.length === 0) {
                 alert('Tidak ada data siswa untuk diunduh.');
@@ -1534,9 +1462,13 @@
                 "No HP WA", "Email", "Jumlah Saudara", "Tinggi Badan (CM)", "Berat Badan (KG)", "Jarak Sekolah", "Waktu Tempuh (Menit)"
             ];
 
+            // Tambahkan BOM agar Excel mendeteksi UTF-8 dengan benar (berguna untuk nama/simbol khusus)
             let csvContent = "\uFEFF";
+            
+            // Satukan Headers
             csvContent += headers.map(h => `"${h.replace(/"/g, '""')}"`).join(",") + "\r\n";
 
+            // Loop dan satukan baris data siswa
             students.forEach(s => {
                 const row = [
                     s.id || "",
@@ -1594,21 +1526,27 @@
                 }).join(",") + "\r\n";
             });
 
+            // Trigger Download File .csv
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const dateString = new Date().toISOString().split('T')[0];
             
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `Rekap_Formulir_Dapodik_SMPST_${dateString}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            if (navigator.msSaveBlob) { // IE 10+
+                navigator.msSaveBlob(blob, `Rekap_Formulir_Dapodik_SMPST_${dateString}.csv`);
+            } else {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `Rekap_Formulir_Dapodik_SMPST_${dateString}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
             
+            // Sembunyikan menu dropdown kembali
             document.getElementById('download-dropdown-menu').classList.add('hidden');
         }
 
-        // Ekspor Backup JSON
+        // EKSPOR DATA BIODATA KE FORMAT FILE BACKUP JSON
         function exportData() {
             const dateString = new Date().toISOString().split('T')[0];
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(students, null, 2));
@@ -1619,32 +1557,14 @@
             downloadAnchor.click();
             downloadAnchor.remove();
             
+            // Sembunyikan menu dropdown kembali
             document.getElementById('download-dropdown-menu').classList.add('hidden');
         }
 
-        // Hubungkan semua fungsi internal ke window scope agar tetap dapat dipanggil secara inline dari HTML
-        window.navigateTo = navigateTo;
-        window.cancelRegistration = cancelRegistration;
-        window.closeCancelConfirmModal = closeCancelConfirmModal;
-        window.executeCancellation = executeCancellation;
-        window.cleanNumberInput = cleanNumberInput;
-        window.toggleWaliSection = toggleWaliSection;
-        window.resetForm = resetForm;
-        window.submitForm = submitForm;
-        window.closeSuccessModal = closeSuccessModal;
-        window.handleLogin = handleLogin;
-        window.handleLogout = handleLogout;
-        window.renderStudentsTable = renderStudentsTable;
-        window.showStudentDetail = showStudentDetail;
-        window.closeDetailModal = closeDetailModal;
-        window.openDeleteConfirmModal = openDeleteConfirmModal;
-        window.closeDeleteConfirmModal = closeDeleteConfirmModal;
-        window.toggleDownloadMenu = toggleDownloadMenu;
-        window.exportToCSV = exportToCSV;
-        window.exportData = exportData;
-
-        // Mulai aplikasi
-        initApp();
+        // Jalankan Inisialisasi awal saat halaman termuat
+        window.onload = function() {
+            initApp();
+        };
     </script>
 </body>
 </html>
